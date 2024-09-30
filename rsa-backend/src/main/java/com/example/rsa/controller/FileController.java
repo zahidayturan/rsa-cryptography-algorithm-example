@@ -12,7 +12,7 @@ import java.nio.file.Paths;
 
 @RestController
 @RequestMapping("/upload")
-public class FileUploadController {
+public class FileController {
 
     @Autowired
     private FileEncryptionService encryptionService;

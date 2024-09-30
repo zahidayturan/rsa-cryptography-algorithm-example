@@ -8,12 +8,12 @@ import java.security.SecureRandom;
 
 @Data
 @Service
-public class RSAEncryptionService {
+public class RsaEncryptionService {
     private final BigInteger n;
     private final BigInteger d;
     private BigInteger e;
 
-    public RSAEncryptionService() {
+    public RsaEncryptionService() {
         SecureRandom random = new SecureRandom();
 
         int bitLength = 2048;
