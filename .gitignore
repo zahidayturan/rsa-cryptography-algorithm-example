@@ -33,4 +33,4 @@ build/
 .vscode/
 
 ### Project ###
-course-up-backend/src/main/resources/config.properties
+rsa-backend/src/main/resources/config.properties

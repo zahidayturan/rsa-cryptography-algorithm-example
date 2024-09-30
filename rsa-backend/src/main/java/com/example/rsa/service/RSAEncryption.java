@@ -17,8 +17,11 @@ public class RSAEncryption {
         int bitLength = 2048;
         BigInteger p = BigInteger.probablePrime(bitLength, random);
         BigInteger q = BigInteger.probablePrime(bitLength, random);
+        System.out.println(p);
+        System.out.println(q);
 
         n = p.multiply(q); // n = p * q
+        System.out.println(n);
         BigInteger phi = (p.subtract(BigInteger.ONE)).multiply(q.subtract(BigInteger.ONE)); // phi(n) = (p-1)*(q-1)
 
         // Public Key
