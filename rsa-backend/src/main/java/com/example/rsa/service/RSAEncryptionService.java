@@ -1,17 +1,19 @@
 package com.example.rsa.service;
 
 import lombok.Data;
+import org.springframework.stereotype.Service;
 
 import java.math.BigInteger;
 import java.security.SecureRandom;
 
 @Data
-public class RSAEncryption {
+@Service
+public class RSAEncryptionService {
     private final BigInteger n;
     private final BigInteger d;
     private BigInteger e;
 
-    public RSAEncryption() {
+    public RSAEncryptionService() {
         SecureRandom random = new SecureRandom();
 
         int bitLength = 2048;

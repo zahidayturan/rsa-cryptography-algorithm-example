@@ -8,10 +8,10 @@ import java.nio.charset.StandardCharsets;
 @Service
 public class FileEncryptionService {
 
-    private RSAEncryption rsa;
+    private RSAEncryptionService rsa;
 
     public FileEncryptionService() {
-        this.rsa = new RSAEncryption();
+        this.rsa = new RSAEncryptionService();
     }
 
     public byte[] encryptFile(byte[] fileData) {
