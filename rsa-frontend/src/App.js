@@ -1,10 +1,15 @@
-import './App.css';
+import React from 'react';
+import {HashRouter as Router, Routes, Route, Navigate} from "react-router-dom";
 
 function App() {
   return (
-    <div>
-      <p>...</p>
-    </div>
+      <Router>
+          <div className="App">
+              <Routes>
+                  <Route path="/" element={<Navigate to="/home" />} />
+              </Routes>
+          </div>
+      </Router>
   );
 }
 
