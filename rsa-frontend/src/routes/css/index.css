@@ -103,6 +103,11 @@ span{
   font-weight: bold;
 }
 
+.mini-icon{
+  width: 18px;
+  height: 18px;
+}
+
 .scenarios{
   display: flex;
   flex-direction: column;
@@ -112,7 +117,7 @@ span{
 
 .scenario-button {
   background-color: var(--grey-color-1);
-  height: 36px;
+  height: 40px;
   padding: 0 20px;
   border-radius: 50px;
   cursor: pointer;
@@ -134,5 +139,40 @@ span{
 
 .scenario-button:hover{
   padding: 0 28px;
+  box-shadow: rgba(0, 0, 0, 0.3) 0 2px 2px;
+}
+
+
+.scenario-area{
+  background-color: var(--primary-color-1);
+  border-radius: 12px;
+  padding: 12px;
+  gap: 12px;
+  display: flex;
+  flex-direction: column;
+  margin-top: 24px;
+}
+
+.user-button {
+  background-color: var(--grey-color-1);
+  height: 36px;
+  padding: 0 12px;
+  border-radius: 12px;
+  cursor: pointer;
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+
+.user-button p{
+  color: var(--black-color-1);
+}
+
+.user-button.active {
+  background-color: var(--orange-color-1);
+  color: var(--secondary-color-1);
+}
+
+.user-button:hover{
   box-shadow: rgba(0, 0, 0, 0.3) 0 2px 2px;
 }
