@@ -95,6 +95,12 @@ button, input{
   }
 }
 
+.home{
+  display: flex;
+  gap: 36px;
+  width: 100%;
+}
+
 .custom-row{
   display: flex;
   gap: 12px;
@@ -106,6 +112,11 @@ span{
 .mini-icon{
   width: 18px;
   height: 18px;
+}
+
+.mid-icon{
+  width: 22px;
+  height: 22px;
 }
 
 .scenarios{
@@ -145,6 +156,7 @@ span{
 
 .scenario-area{
   background-color: var(--primary-color-1);
+  width: content-box;
   border-radius: 12px;
   padding: 12px;
   gap: 12px;
@@ -175,4 +187,20 @@ span{
 
 .user-button:hover{
   box-shadow: rgba(0, 0, 0, 0.3) 0 2px 2px;
+}
+
+.file-explorer{
+  background-color: var(--black-color-1);
+  width: 40%;
+  height: max-content;
+  min-width: 200px;
+  border-radius: 12px;
+  padding: 12px;
+  gap: 12px;
+  display: flex;
+  flex-direction: column;
+}
+
+.file-explorer p{
+  color: var(--secondary-color-1);
 }
