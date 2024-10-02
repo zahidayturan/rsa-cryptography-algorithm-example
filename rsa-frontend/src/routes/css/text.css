@@ -9,3 +9,11 @@
 .small-text{
     font-size: 14px;
 }
+
+.x-small-text{
+    font-size: 12px;
+}
+
+.font-bold{
+    font-weight: bold;
+}

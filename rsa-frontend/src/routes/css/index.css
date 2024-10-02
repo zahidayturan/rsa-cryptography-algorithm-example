@@ -5,6 +5,7 @@
   --orange-color-1: rgb(254,129,45);
   --green-color-1: rgb(3,166,74);
   --yellow-color-1: rgb(255,201,40);
+  --red-color-1: rgb(230,38,38);
   --grey-color-1: rgb(231,231,231);
   --background-color: rgb(245, 245, 245);
   --secondary-color-1: rgb(245,245,245);
@@ -119,11 +120,24 @@ span{
   height: 22px;
 }
 
+.icon-box{
+  border-radius: 100%;
+  width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
 .scenarios{
   display: flex;
   flex-direction: column;
   gap: 12px;
-
+  background-color: var(--primary-color-1);
+  width: max-content;
+  border-radius: 12px;
+  padding: 12px;
 }
 
 .scenario-button {
@@ -150,7 +164,6 @@ span{
 
 .scenario-button:hover{
   padding: 0 28px;
-  box-shadow: rgba(0, 0, 0, 0.3) 0 2px 2px;
 }
 
 
@@ -185,7 +198,7 @@ span{
   color: var(--secondary-color-1);
 }
 
-.user-button:hover{
+.user-button:hover ,.scenario-button:hover ,.remove-button:hover{
   box-shadow: rgba(0, 0, 0, 0.3) 0 2px 2px;
 }
 
@@ -203,4 +216,29 @@ span{
 
 .file-explorer p{
   color: var(--secondary-color-1);
+}
+
+.remove-button{
+  width: max-content;
+  display: flex;
+  gap: 6px;
+  border-radius: 6px;
+  padding: 6px;
+  background-color: var(--red-color-1);
+  cursor: pointer;
+  align-self: end;
+}
+
+.remove-button:hover{
+  padding: 6px 8px;
+}
+
+.file-container{
+  padding: 8px;
+  border-radius: 8px;
+  background-color: var(--grey-color-1);
+}
+
+.file-container p{
+  color: var(--black-color-1);
 }
