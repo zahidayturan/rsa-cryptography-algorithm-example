@@ -1,4 +1,5 @@
 import React from 'react';
+import axios from "axios";
 
 const FileContainer = ({ owner, fileName, size, id }) => (
     <div className={"file-container custom-row"} style={{justifyContent:"space-between",alignItems:"center"}}>
@@ -19,6 +20,18 @@ const FileContainer = ({ owner, fileName, size, id }) => (
 );
 
 const FileExplorer = () => {
+
+    const clean = () => {
+        axios.get(`http://localhost:8080/user/clean`)
+            .then(response => {
+                console.log("Kullanıcılar başarıyla silindi:", response.data);
+            })
+            .catch(error => {
+                console.error("Kullanıcılar silinirken hata oluştu:", error);
+            });
+        window.location.reload();
+    };
+
 
     return (
         <div className="file-explorer">
@@ -42,7 +55,7 @@ const FileExplorer = () => {
 
             <FileContainer owner="Alice" fileName="abc.txt" size="148 kb" id="1" />
 
-            <div className={"remove-button"}>
+            <div className={"remove-button"} onClick={clean}>
                 <img src="/icon/bin.png" alt="Clear System" className={"mini-icon"}/>
                 <p className={"small-text"}>Sistemi Temizle</p>
             </div>

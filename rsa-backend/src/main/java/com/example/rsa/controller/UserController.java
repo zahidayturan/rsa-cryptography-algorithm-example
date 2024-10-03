@@ -2,6 +2,7 @@ package com.example.rsa.controller;
 
 import com.example.rsa.model.User;
 import com.example.rsa.service.UserService;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -32,5 +33,22 @@ public class UserController {
             return ResponseEntity.status(500).body("Kullanıcı silinirken hata: " + e.getMessage());
         }
     }
+
+    @PutMapping("/{id}/{field}/{newValue}")
+    public ResponseEntity<String> updateUser(@PathVariable Integer id, @PathVariable String field, @PathVariable boolean newValue) {
+        try {
+            userService.updateUser(id, field,newValue);
+            return ResponseEntity.ok("Kullanıcı başarıyla güncellendi.");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Kullanıcı güncellenirken hata oluştu: " + e.getMessage());
+        }
+    }
+
+    @Operation(summary = "Delete all users")
+    @GetMapping("/clean")
+    public void cleanUsers() {
+        userService.cleanAllUsers();
+    }
+
 }
 

@@ -1,18 +1,17 @@
 import React, { useState } from 'react';
 import Switch from "./Switch";
 import axios from 'axios';
-import endpoints from "../../contants/endpoints";
 import Endpoints from "../../contants/endpoints";
 
 const initialUsers = [
-    { id: 1, name: 'Alice', publicKey: false, privateKey: false, fileUpload: false, readFiles: false, eKey: "...", dKey:"..." },
-    { id: 2, name: 'Bob', publicKey: false, privateKey: false, fileUpload: false, readFiles: false,eKey: "...", dKey:"..." },
-    { id: 3, name: 'Charlie', publicKey: false, privateKey: false, fileUpload: false, readFiles: false,eKey: "...", dKey:"..." },
+    { id: 1, name: 'Alice', publicKey: false, privateKey: false, fileUpload: false, readFiles: false, fileSend: false,fileReceive: false, eKey: "...", dKey:"..." },
+    { id: 2, name: 'Bob', publicKey: false, privateKey: false, fileUpload: false, readFiles: false,fileSend: false,fileReceive: false, eKey: "...", dKey:"..." },
+    { id: 3, name: 'Charlie', publicKey: false, privateKey: false, fileUpload: false, readFiles: false,fileSend: false,fileReceive: false, eKey: "...", dKey:"..." },
 ];
 
 const UserContainer = ({ user, handleUserToggle }) => {
-    const handleToggle = (field) => {
-        handleUserToggle(user.id, field);
+    const handleToggle = (field,newValue) => {
+        handleUserToggle(user.id, field,newValue);
     };
 
     return (
@@ -22,7 +21,7 @@ const UserContainer = ({ user, handleUserToggle }) => {
             <div className={"custom-row"} style={{gap:0}}>
                 <Switch
                     isOn={user.publicKey}
-                    handleToggle={() => handleToggle('publicKey')}
+                    handleToggle={() => handleToggle('publicKey',!user.publicKey)}
                     id={user.id+"publicKey"}
                 />
                 <div>
@@ -35,7 +34,7 @@ const UserContainer = ({ user, handleUserToggle }) => {
             <div className={"custom-row"} style={{gap:0}}>
                 <Switch
                     isOn={user.privateKey}
-                    handleToggle={() => handleToggle('privateKey')}
+                    handleToggle={() => handleToggle('privateKey',!user.privateKey)}
                     id={user.id+"privateKey"}
                 />
                 <div>
@@ -49,7 +48,7 @@ const UserContainer = ({ user, handleUserToggle }) => {
                 <div className={"custom-row"} style={{gap:0}}>
                     <Switch
                         isOn={user.fileUpload}
-                        handleToggle={() => handleToggle('fileUpload')}
+                        handleToggle={() => handleToggle('fileUpload',!user.fileUpload)}
                         id={user.id+"fileUpload"}
                     />
                     <div>
@@ -61,7 +60,7 @@ const UserContainer = ({ user, handleUserToggle }) => {
                 <div className={"custom-row"} style={{gap:0}}>
                     <Switch
                         isOn={user.readFiles}
-                        handleToggle={() => handleToggle('readFiles')}
+                        handleToggle={() => handleToggle('readFiles',!user.readFiles)}
                         id={user.id+"readFiles"}
                     />
                     <div>
@@ -105,8 +104,8 @@ const ScenarioArea = () => {
                 privateKey: user.privateKey,
                 fileUpload: user.fileUpload,
                 fileRead: user.readFiles,
-                fileSend: false,
-                fileReceive: false,
+                fileSend: user.fileSend,
+                fileReceive: user.readFiles,
                 eKey: user.eKey,
                 dKey: user.dKey
             })
@@ -120,12 +119,20 @@ const ScenarioArea = () => {
         }
     };
 
-    const handleUserToggle = (userId, field) => {
+    const handleUserToggle = (userId, field,newValue) => {
         setUsers(users.map(user =>
             user.id === userId
                 ? { ...user, [field]: !user[field] }
                 : user
         ));
+
+        axios.put(`http://localhost:8080/user/${userId}/${field}/${newValue}`)
+            .then(response => {
+                console.log("Kullanıcı başarıyla güncellendi:", response.data);
+            })
+            .catch(error => {
+                console.error("Kullanıcı güncellenirken hata oluştu:", error);
+            });
     };
 
     return (
