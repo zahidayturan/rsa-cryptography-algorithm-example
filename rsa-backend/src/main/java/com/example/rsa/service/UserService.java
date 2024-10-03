@@ -3,6 +3,7 @@ package com.example.rsa.service;
 import com.example.rsa.model.User;
 import org.springframework.stereotype.Service;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -50,6 +51,22 @@ public class UserService {
                     case "fileRead" -> user.setFileRead(newValue);
                     case "fileSend" -> user.setFileSend(newValue);
                     case "fileReceive" -> user.setFileReceive(newValue);
+                }
+                break;
+            }
+        }
+        System.out.println(getAllUsers());
+    }
+
+    public void updateUserKey(Integer id, String type , BigInteger key) {
+        System.out.println(id);
+        System.out.println(type);
+        System.out.println(key);
+        for (User user : users) {
+            if (user.getId().equals(id)) {
+                switch (type) {
+                    case "eKey" -> user.setEKey(key);
+                    case "dKey" -> user.setDKey(key);
                 }
                 break;
             }

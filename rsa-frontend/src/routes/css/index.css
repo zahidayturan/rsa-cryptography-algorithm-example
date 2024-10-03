@@ -257,3 +257,13 @@ span{
   color: var(--black-color-1);
 }
 
+.user-operation-button{
+  margin-top: 4px;
+  padding: 8px 12px;
+  border-radius: 50px;
+  background-color: var(--grey-color-1);
+  color: var(--primary-color-1);
+  text-align: center;
+  font-size: 13px;
+}
+

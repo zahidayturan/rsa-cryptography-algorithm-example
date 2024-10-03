@@ -9,22 +9,23 @@ import java.security.SecureRandom;
 @Data
 @Service
 public class RsaEncryptionService {
-    private final BigInteger n;
-    private final BigInteger d;
+    private  BigInteger n;
+    private  BigInteger d;
     private BigInteger e;
 
     public RsaEncryptionService() {
+        initializeKeys();
+    }
+
+    private void initializeKeys() {
         SecureRandom random = new SecureRandom();
 
         int bitLength = 2048;
         BigInteger p = BigInteger.probablePrime(bitLength, random);
         BigInteger q = BigInteger.probablePrime(bitLength, random);
-        System.out.println(p);
-        System.out.println(q);
 
-        n = p.multiply(q); // n = p * q
-        System.out.println(n);
-        BigInteger phi = (p.subtract(BigInteger.ONE)).multiply(q.subtract(BigInteger.ONE)); // phi(n) = (p-1)*(q-1)
+        n = p.multiply(q);
+        BigInteger phi = (p.subtract(BigInteger.ONE)).multiply(q.subtract(BigInteger.ONE));
 
         // Public Key
         e = BigInteger.probablePrime(bitLength / 2, random);
@@ -33,10 +34,10 @@ public class RsaEncryptionService {
         }
 
         // Private Key
-        d = e.modInverse(phi); // d = e^(-1) mod phi
+        d = e.modInverse(phi);
 
-        System.out.println(e);
-        System.out.println(d);
+        System.out.println("Public Key :"+e);
+        System.out.println("Private Key :"+d);
     }
 
     public BigInteger encrypt(BigInteger message) {

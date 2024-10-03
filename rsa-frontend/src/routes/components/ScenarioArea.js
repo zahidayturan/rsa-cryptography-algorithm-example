@@ -26,8 +26,7 @@ const UserContainer = ({ user, handleUserToggle }) => {
                 />
                 <div>
                     <p>Açık Anahtar</p>
-                    <p className={"small-text"}>{user.publicKey ? user.eKey : "Kapalı"}</p>
-                    <p></p>
+                    <p className={"x-small-text font-bold"}>{user.publicKey ? user.eKey : "Kapalı"}</p>
                 </div>
             </div>
 
@@ -39,8 +38,7 @@ const UserContainer = ({ user, handleUserToggle }) => {
                 />
                 <div>
                     <p>Kapalı Anahtar</p>
-                    <p className={"small-text"}>{user.privateKey ? user.dKey : "Kapalı"}</p>
-                    <p></p>
+                    <p className={"x-small-text font-bold"}>{user.privateKey ? user.dKey : "Kapalı"}</p>
                 </div>
             </div>
 
@@ -53,9 +51,14 @@ const UserContainer = ({ user, handleUserToggle }) => {
                     />
                     <div>
                         <p>Dosya Yükleme</p>
-                        <p className={"small-text"}>{user.fileUpload ? user.fileUpload : "Kapalı"}</p>
-                        <p></p>
+                        <p className={"x-small-text font-bold"}>
+                            {user.fileUpload ? "Açık" : "Kapalı"}
+                        </p>
+                        <div className={"user-operation-button"} style={{ backgroundColor: user.fileUpload && "rgb(0,176,176)",cursor: user.fileUpload && "pointer" }}>
+                            Dosya Yükle
+                        </div>
                     </div>
+
                 </div>
                 <div className={"custom-row"} style={{gap:0}}>
                     <Switch
@@ -65,8 +68,10 @@ const UserContainer = ({ user, handleUserToggle }) => {
                     />
                     <div>
                         <p>Dosya Okuma</p>
-                        <p className={"small-text"}>{user.readFiles ? user.readFiles : "Kapalı"}</p>
-                        <p></p>
+                        <p className={"x-small-text font-bold"}>{user.readFiles ? "Açık" : "Kapalı"}</p>
+                        <div className={"user-operation-button"} style={{ backgroundColor: user.readFiles && "rgb(16,64,59)",cursor: user.readFiles && "pointer" }}>
+                            Dosya Görüntüle
+                        </div>
                     </div>
                 </div>
             </div>
@@ -119,10 +124,26 @@ const ScenarioArea = () => {
         }
     };
 
-    const handleUserToggle = (userId, field,newValue) => {
+    const updateEKeys = (id, newKey) => {
+        setUsers(prevUsers =>
+            prevUsers.map(user =>
+                user.id === id ? { ...user, eKey: newKey} : user
+            )
+        );
+    };
+
+    const updateDKeys = (id, newKey) => {
+        setUsers(prevUsers =>
+            prevUsers.map(user =>
+                user.id === id ? { ...user, dKey: newKey} : user
+            )
+        );
+    };
+
+    const handleUserToggle = (userId, field, newValue) => {
         setUsers(users.map(user =>
             user.id === userId
-                ? { ...user, [field]: !user[field] }
+                ? {...user, [field]: !user[field]}
                 : user
         ));
 
@@ -133,6 +154,28 @@ const ScenarioArea = () => {
             .catch(error => {
                 console.error("Kullanıcı güncellenirken hata oluştu:", error);
             });
+
+        if (field === "publicKey") {
+            axios.get(`http://localhost:8080/user/key/eKey/${userId}`)
+                .then(response => {
+                    updateEKeys(userId, response.data);
+                    console.log("Kullanıcı public key alındı:", response);
+                })
+                .catch(error => {
+                    console.error("Kullanıcı public key alınamadı:", error);
+                });
+        }
+        if (field === "privateKey") {
+            axios.get(`http://localhost:8080/user/key/dKey/${userId}`)
+                .then(response => {
+                    updateDKeys(userId, response.data);
+                    console.log("Kullanıcı private key alındı:", response);
+                })
+                .catch(error => {
+                    console.error("Kullanıcı private key alınamadı:", error);
+                });
+        }
+
     };
 
     return (
