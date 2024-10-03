@@ -1,12 +1,79 @@
 import React, { useState } from 'react';
+import Switch from "./Switch";
 
-const users = [
-    { id: 1, name: 'Alice' },
-    { id: 2, name: 'Bob' },
-    { id: 3, name: 'Charlie' },
+const initialUsers = [
+    { id: 1, name: 'Alice', publicKey: false, privateKey: false, fileUpload: false, readFiles: false, eKey: "...", dKey:"..." },
+    { id: 2, name: 'Bob', publicKey: false, privateKey: false, fileUpload: false, readFiles: false,eKey: "...", dKey:"..." },
+    { id: 3, name: 'Charlie', publicKey: false, privateKey: false, fileUpload: false, readFiles: false,eKey: "...", dKey:"..." },
 ];
 
+const UserContainer = ({ user, handleUserToggle }) => {
+    const handleToggle = (field) => {
+        handleUserToggle(user.id, field);
+    };
+
+    return (
+        <div className={"user-container"}>
+            <p className={"font-bold"} style={{ color: "var(--orange-color-1)" }}>{user.name}</p>
+
+            <div className={"custom-row"} style={{gap:0}}>
+                <Switch
+                    isOn={user.publicKey}
+                    handleToggle={() => handleToggle('publicKey')}
+                    id={user.id+"publicKey"}
+                />
+                <div>
+                    <p>Açık Anahtar</p>
+                    <p className={"small-text"}>{user.publicKey ? user.eKey : "Kapalı"}</p>
+                    <p></p>
+                </div>
+            </div>
+
+            <div className={"custom-row"} style={{gap:0}}>
+                <Switch
+                    isOn={user.privateKey}
+                    handleToggle={() => handleToggle('privateKey')}
+                    id={user.id+"privateKey"}
+                />
+                <div>
+                    <p>Kapalı Anahtar</p>
+                    <p className={"small-text"}>{user.privateKey ? user.dKey : "Kapalı"}</p>
+                    <p></p>
+                </div>
+            </div>
+
+            <div className={"custom-row"} style={{gap:36}}>
+                <div className={"custom-row"} style={{gap:0}}>
+                    <Switch
+                        isOn={user.fileUpload}
+                        handleToggle={() => handleToggle('fileUpload')}
+                        id={user.id+"fileUpload"}
+                    />
+                    <div>
+                        <p>Dosya Yükleme</p>
+                        <p className={"small-text"}>{user.fileUpload ? user.fileUpload : "Kapalı"}</p>
+                        <p></p>
+                    </div>
+                </div>
+                <div className={"custom-row"} style={{gap:0}}>
+                    <Switch
+                        isOn={user.readFiles}
+                        handleToggle={() => handleToggle('readFiles')}
+                        id={user.id+"readFiles"}
+                    />
+                    <div>
+                        <p>Dosya Okuma</p>
+                        <p className={"small-text"}>{user.readFiles ? user.readFiles : "Kapalı"}</p>
+                        <p></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
 const ScenarioArea = () => {
+    const [users, setUsers] = useState(initialUsers);
     const [activeUsers, setActiveUsers] = useState([]);
 
     const handleUserClick = (userId) => {
@@ -17,11 +84,19 @@ const ScenarioArea = () => {
         }
     };
 
+    const handleUserToggle = (userId, field) => {
+        setUsers(users.map(user =>
+            user.id === userId
+                ? { ...user, [field]: !user[field] }
+                : user
+        ));
+    };
+
     return (
         <div className="scenario-area">
             <p className={"title-text"}><span>Senaryo</span> Alanı</p>
             <div className="custom-row">
-                <p className={"italic"} style={{marginRight:12}}>Kullanıcı<br/>Seçim</p>
+                <p className={"italic"} style={{ marginRight: 12 }}>Kullanıcı<br />Seçim</p>
                 {users.map((user) => (
                     <div
                         key={user.id}
@@ -36,6 +111,21 @@ const ScenarioArea = () => {
                     </div>
                 ))}
             </div>
+            {
+                activeUsers
+                    .sort((a, b) => a - b)
+                    .map((id) => {
+                        const user = users.find(user => user.id === id);
+                        return (
+                            <div key={id}>
+                                <UserContainer
+                                    user={user}
+                                    handleUserToggle={handleUserToggle}
+                                />
+                            </div>
+                        );
+                    })
+            }
         </div>
     );
 };

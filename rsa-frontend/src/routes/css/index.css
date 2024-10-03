@@ -242,3 +242,18 @@ span{
 .file-container p{
   color: var(--black-color-1);
 }
+
+
+.user-container{
+  padding: 8px;
+  border-radius: 8px;
+  background-color: var(--secondary-color-1);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.file-container p{
+  color: var(--black-color-1);
+}
+
