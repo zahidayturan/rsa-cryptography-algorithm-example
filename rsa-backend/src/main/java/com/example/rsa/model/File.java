@@ -7,6 +7,6 @@ public class File {
 
     private Integer id;
     private String name;
-    private String ownerName;
-    private String recipientName;
+    private Integer ownerId;
+    private Integer recipientId;
 }

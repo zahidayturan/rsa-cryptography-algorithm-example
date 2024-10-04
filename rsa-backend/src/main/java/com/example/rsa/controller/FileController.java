@@ -18,7 +18,7 @@ public class FileController {
     private FileEncryptionService encryptionService;
 
     @PostMapping
-    public ResponseEntity<String> handleFileUpload(@RequestParam("file") MultipartFile file) {
+    public ResponseEntity<String> handleFileUpload(@RequestParam("file") MultipartFile file,@RequestParam("userId") MultipartFile userId,@RequestParam("recipientId") MultipartFile recipientId) {
         try {
             byte[] encryptedFile = encryptionService.encryptFile(file.getBytes());
             Files.write(Paths.get("encrypted_files/" + file.getOriginalFilename()), encryptedFile);

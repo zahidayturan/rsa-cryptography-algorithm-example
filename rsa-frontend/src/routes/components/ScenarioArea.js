@@ -14,6 +14,39 @@ const UserContainer = ({ user, handleUserToggle }) => {
         handleUserToggle(user.id, field,newValue);
     };
 
+    const handleFileChange = (event, userId) => {
+        const file = event.target.files[0]; // İlk dosyayı al
+        if (file) {
+            if (file.size > 256) {
+                alert("Dosya boyutu 256 byte'ı geçemez. Lütfen daha küçük bir dosya yükleyin.");
+                return;
+            }
+
+            console.log("Seçilen dosya:", file);
+
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            axios.post(`http://localhost:8080/upload/${userId}`, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            })
+                .then(response => {
+                    console.log("Dosya başarıyla yüklendi:", response.data);
+                    // Başarılı yüklemeden sonra yapılacak işlemler
+                })
+                .catch(error => {
+                    console.error("Dosya yüklenirken hata oluştu:", error);
+                });
+        } else {
+            alert("Lütfen bir dosya seçin."); // Dosya seçilmediyse uyarı
+        }
+    };
+
+
+
     return (
         <div className={"user-container"}>
             <p className={"font-bold"} style={{ color: "var(--orange-color-1)" }}>{user.name}</p>
@@ -54,9 +87,21 @@ const UserContainer = ({ user, handleUserToggle }) => {
                         <p className={"x-small-text font-bold"}>
                             {user.fileUpload ? "Açık" : "Kapalı"}
                         </p>
-                        <div className={"user-operation-button"} style={{ backgroundColor: user.fileUpload && "rgb(0,176,176)",cursor: user.fileUpload && "pointer" }}>
+                        <div className={"user-operation-button"}
+                             style={{ backgroundColor: user.fileUpload && "rgb(0,176,176)", cursor: user.fileUpload && "pointer" }}
+                             onClick={() => document.getElementById(`fileInput-${user.id}`).click()} // Butona tıkladığında dosya seçme penceresini aç
+                        >
                             Dosya Yükle
                         </div>
+                        {user.fileUpload && (
+                            <input
+                                type="file"
+                                id={`fileInput-${user.id}`}
+                                accept=".txt,.pdf,.doc,.docx"
+                                onChange={(event) => handleFileChange(event, user.id)}
+                                style={{ display: 'none' }}
+                            />
+                        )}
                     </div>
 
                 </div>
