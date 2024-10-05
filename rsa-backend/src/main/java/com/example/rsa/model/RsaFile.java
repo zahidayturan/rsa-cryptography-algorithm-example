@@ -9,4 +9,6 @@ public class RsaFile {
     private String name;
     private Integer ownerId;
     private Integer recipientId;
+    private Long size;
+
 }

@@ -26,6 +26,7 @@ public class FileService {
 
 
         //byte[] encryptedFile = encryptionService.encryptFile(file.getBytes());
+        long fileSize = file.getSize();
         String directory = "encrypted_files/";
         String filename = file.getOriginalFilename();
         Path filePath = Paths.get(directory + filename);
@@ -34,10 +35,11 @@ public class FileService {
         Files.write(filePath, file.getBytes());
         System.out.println("Encrypted file saved: " + file.getOriginalFilename());
 
-        RsaFile newFile = null;
+        RsaFile newFile = new RsaFile();
         newFile.setId(files.size()+1);
         newFile.setName(file.getOriginalFilename());
         newFile.setOwnerId(userId);
+        newFile.setSize(fileSize);
         newFile.setRecipientId(recipientId);
         files.add(newFile);
         System.out.println(getAllFiles());

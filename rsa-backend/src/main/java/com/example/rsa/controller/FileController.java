@@ -1,13 +1,18 @@
 package com.example.rsa.controller;
 
+import com.example.rsa.model.RsaFile;
 import com.example.rsa.service.FileService;
+import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.math.BigInteger;
+import java.util.List;
+
 @RestController
-@RequestMapping("/upload")
+@RequestMapping("/file")
 public class FileController {
 
 
@@ -23,5 +28,11 @@ public class FileController {
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Error during file encryption: " + e.getMessage());
         }
+    }
+
+    @Operation(summary = "Get public key")
+    @GetMapping("/all")
+    public List<RsaFile> allFiles() {
+        return fileService.getAllFiles();
     }
 }
