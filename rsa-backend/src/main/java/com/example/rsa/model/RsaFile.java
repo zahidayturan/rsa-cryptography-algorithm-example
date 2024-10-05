@@ -3,7 +3,7 @@ package com.example.rsa.model;
 import lombok.Data;
 
 @Data
-public class File {
+public class RsaFile {
 
     private Integer id;
     private String name;

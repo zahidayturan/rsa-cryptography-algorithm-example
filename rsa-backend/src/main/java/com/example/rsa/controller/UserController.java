@@ -1,6 +1,7 @@
 package com.example.rsa.controller;
 
 import com.example.rsa.model.User;
+import com.example.rsa.service.FileService;
 import com.example.rsa.service.RsaEncryptionService;
 import com.example.rsa.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -17,6 +18,10 @@ public class UserController {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private FileService fileService;
+
 
     @Autowired
     private RsaEncryptionService rsaEncryptionService;
@@ -51,10 +56,11 @@ public class UserController {
         }
     }
 
-    @Operation(summary = "Delete all users")
+    @Operation(summary = "Delete all users and files")
     @GetMapping("/clean")
-    public void cleanUsers() {
+    public void cleanUsersAndFiles() {
         userService.cleanAllUsers();
+        fileService.cleanAllFiles();
     }
 
     @Operation(summary = "Get user key")
