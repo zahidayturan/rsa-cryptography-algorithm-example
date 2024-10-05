@@ -10,12 +10,16 @@ const initialUsers = [
 ];
 
 const UserContainer = ({ user, handleUserToggle }) => {
+    const [loading, setLoading] = useState(false);
+
     const handleToggle = (field,newValue) => {
         handleUserToggle(user.id, field,newValue);
     };
 
-    const handleFileChange = (event, userId) => {
-        const file = event.target.files[0]; // İlk dosyayı al
+    const handleFileChange = (event, userId, recipientId) => {
+        setLoading(true);
+        const file = event.target.files[0];
+
         if (file) {
             if (file.size > 256) {
                 alert("Dosya boyutu 256 byte'ı geçemez. Lütfen daha küçük bir dosya yükleyin.");
@@ -24,31 +28,34 @@ const UserContainer = ({ user, handleUserToggle }) => {
 
             console.log("Seçilen dosya:", file);
 
-
             const formData = new FormData();
             formData.append('file', file);
+            formData.append('userId', userId);
+            formData.append('recipientId', recipientId);
 
-            axios.post(`http://localhost:8080/upload/${userId}`, formData, {
+            axios.post(`http://localhost:8080/upload`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
+            }).then(response => {
+                console.log("Dosya başarıyla yüklendi:", response.data);
             })
-                .then(response => {
-                    console.log("Dosya başarıyla yüklendi:", response.data);
-                    // Başarılı yüklemeden sonra yapılacak işlemler
-                })
                 .catch(error => {
                     console.error("Dosya yüklenirken hata oluştu:", error);
                 });
         } else {
-            alert("Lütfen bir dosya seçin."); // Dosya seçilmediyse uyarı
+            alert("Lütfen bir dosya seçin.");
         }
+        setLoading(false);
     };
 
 
 
+
     return (
-        <div className={"user-container"}>
+        <>
+            {loading && <div className={"loading-overlay"}><div className={"main-spinner"}></div></div>}
+            <div className={"user-container"}>
             <p className={"font-bold"} style={{ color: "var(--orange-color-1)" }}>{user.name}</p>
 
             <div className={"custom-row"} style={{gap:0}}>
@@ -98,7 +105,7 @@ const UserContainer = ({ user, handleUserToggle }) => {
                                 type="file"
                                 id={`fileInput-${user.id}`}
                                 accept=".txt,.pdf,.doc,.docx"
-                                onChange={(event) => handleFileChange(event, user.id)}
+                                onChange={(event) => handleFileChange(event, user.id, user.id)}
                                 style={{ display: 'none' }}
                             />
                         )}
@@ -121,6 +128,7 @@ const UserContainer = ({ user, handleUserToggle }) => {
                 </div>
             </div>
         </div>
+        </>
     );
 };
 
