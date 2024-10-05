@@ -33,7 +33,7 @@ const UserContainer = ({ user, handleUserToggle }) => {
             formData.append('userId', userId);
             formData.append('recipientId', recipientId);
 
-            axios.post(`http://localhost:8080/upload`, formData, {
+            axios.post(`http://localhost:8080/file`, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
