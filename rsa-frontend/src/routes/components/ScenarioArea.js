@@ -1,13 +1,6 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import Switch from "./Switch";
 import axios from 'axios';
-import Endpoints from "../../contants/endpoints";
-
-const initialUsers = [
-    { id: 1, name: 'Alice', publicKey: false, privateKey: false, fileUpload: false, readFiles: false, fileSend: false,fileReceive: false, eKey: "...", dKey:"..." },
-    { id: 2, name: 'Bob', publicKey: false, privateKey: false, fileUpload: false, readFiles: false,fileSend: false,fileReceive: false, eKey: "...", dKey:"..." },
-    { id: 3, name: 'Charlie', publicKey: false, privateKey: false, fileUpload: false, readFiles: false,fileSend: false,fileReceive: false, eKey: "...", dKey:"..." },
-];
 
 const UserContainer = ({ user, handleUserToggle }) => {
     const [loading, setLoading] = useState(false);
@@ -133,46 +126,39 @@ const UserContainer = ({ user, handleUserToggle }) => {
 };
 
 const ScenarioArea = () => {
-    const [users, setUsers] = useState(initialUsers);
+    const [users, setUsers] = useState(null);
     const [activeUsers, setActiveUsers] = useState([]);
     const [loading, setLoading] = useState(false);
+
+    useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const response = await axios.get(`http://localhost:8080/user/all`);
+                const users = response.data;
+                setUsers(users);
+            } catch (error) {
+                console.log('Sepetiniz yüklenirken bir hata oluştu');
+            } finally {
+                setLoading(false);
+            }
+        };
+        if (users === null || users.length === 0) {
+            fetchUser();
+            console.log(users);
+        } else {
+            console.log('No user data found in localStorage');
+        }
+    }, []);
 
 
     const handleUserClick = (userId) => {
         if (activeUsers.includes(userId)) {
             setLoading(true);
             setActiveUsers(activeUsers.filter(id => id !== userId));
-            axios.delete(`${Endpoints.USER}/${userId}`)
-                .then(response => {
-                    console.log("Kullanıcı başarıyla silindi:", response.data);
-                })
-                .catch(error => {
-                    console.error("Kullanıcı silinirken hata oluştu:", error);
-                });
             setLoading(false);
         } else {
             setLoading(true);
-            const user = users.find(u => u.id === userId);
             setActiveUsers([...activeUsers, userId]);
-
-            axios.post(Endpoints.USER, {
-                id: user.id,
-                name: user.name,
-                publicKey: user.publicKey,
-                privateKey: user.privateKey,
-                fileUpload: user.fileUpload,
-                fileRead: user.readFiles,
-                fileSend: user.fileSend,
-                fileReceive: user.readFiles,
-                eKey: user.eKey,
-                dKey: user.dKey
-            })
-                .then(response => {
-                    console.log("Kullanıcı başarıyla eklendi:", response.data);
-                })
-                .catch(error => {
-                    console.error("Kullanıcı eklenirken hata oluştu:", error);
-                });
             setLoading(false);
         }
     };
@@ -238,19 +224,23 @@ const ScenarioArea = () => {
                 <p className={"title-text"}><span>Senaryo</span> Alanı</p>
                 <div className="custom-row">
                     <p className={"italic"} style={{ marginRight: 12 }}>Kullanıcı<br />Seçim</p>
-                    {users.map((user) => (
-                        <div
-                            key={user.id}
-                            className={`user-button ${activeUsers.includes(user.id) ? 'active' : ''}`}
-                            onClick={() => handleUserClick(user.id)}
-                        >
-                            <img src="/icon/user.png" alt="User Icon" className="mini-icon"
-                                 style={{
-                                     filter: activeUsers.includes(user.id) ? 'brightness(0) invert(1)' : 'none'
-                                 }}
-                            /> {user.name}
-                        </div>
-                    ))}
+                    {
+                        (users !== null && users.length !== 0) ?
+                            users.map((user) => (
+                                    <div
+                                        key={user.id}
+                                        className={`user-button ${activeUsers.includes(user.id) ? 'active' : ''}`}
+                                        onClick={() => handleUserClick(user.id)}
+                                    >
+                                        <img src="/icon/user.png" alt="User Icon" className="mini-icon"
+                                             style={{
+                                                 filter: activeUsers.includes(user.id) ? 'brightness(0) invert(1)' : 'none'
+                                             }}
+                                        /> {user.name}
+                                    </div>
+                                )) : (<div>Boş</div>)
+                    }
+
                 </div>
                 {
                     activeUsers
