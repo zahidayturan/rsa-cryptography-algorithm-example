@@ -25,19 +25,20 @@ public class FileService {
     public void saveFile(MultipartFile file,Integer userId,Integer recipientId) throws IOException {
 
 
-        //byte[] encryptedFile = encryptionService.encryptFile(file.getBytes());
+        byte[] encryptedFile = encryptionService.encryptFile(file.getBytes());
         long fileSize = file.getSize();
         String directory = "encrypted_files/";
-        String filename = file.getOriginalFilename();
+        String filename = (files.size()+1)+file.getOriginalFilename();
+        System.out.println(filename);
         Path filePath = Paths.get(directory + filename);
         Files.createDirectories(filePath.getParent());
 
-        Files.write(filePath, file.getBytes());
+        Files.write(filePath, encryptedFile);
         System.out.println("Encrypted file saved: " + file.getOriginalFilename());
 
         RsaFile newFile = new RsaFile();
         newFile.setId(files.size()+1);
-        newFile.setName(file.getOriginalFilename());
+        newFile.setName(filename);
         newFile.setOwnerId(userId);
         newFile.setSize(fileSize);
         newFile.setRecipientId(recipientId);
@@ -51,7 +52,6 @@ public class FileService {
 
     public void cleanAllFiles() {
         Path directory = Paths.get("encrypted_files/");
-
         try (Stream<Path> files = Files.walk(directory)) {
             files.sorted(Comparator.reverseOrder())
                     .forEach(path -> {

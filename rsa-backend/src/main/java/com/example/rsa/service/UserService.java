@@ -10,32 +10,30 @@ import java.util.List;
 @Service
 public class UserService {
 
-    List<User> users = new ArrayList<>();
-
-    public void saveUser(User user) {
-        users.add(user);
-        System.out.println(getAllUsers());
+    List<User> users;
+    public UserService() {
+        users = new ArrayList<>();
+        addInitialUsers();
     }
 
-    public void deleteUser(Integer id) {
-        users.removeIf(user -> user.getId().equals(id));
-        System.out.println(getAllUsers());
+    private void addInitialUsers() {
+        User alice = new User(1, "Alice", false, false, false, false, false, false, new BigInteger("0"), new BigInteger("0"));
+        User bob = new User(2, "Bob", false, false, false, false, false, false, new BigInteger("0"), new BigInteger("0"));
+        User charlie = new User(3, "Charlie", false, false, false, false, false, false, new BigInteger("0"), new BigInteger("0"));
+
+        users.add(alice);
+        users.add(bob);
+        users.add(charlie);
     }
 
     public List<User> getAllUsers() {
         return users;
     }
 
-    public void cleanAllUsers() {
+    public void resetAllUsers() {
         users.clear();
+        addInitialUsers();
         System.out.println(getAllUsers());
-    }
-
-    public User getUserById(Integer id) {
-        return users.stream()
-                .filter(user -> user.getId().equals(id))
-                .findFirst()
-                .orElse(null);
     }
 
     public void updateUser(Integer id, String field ,boolean newValue) {

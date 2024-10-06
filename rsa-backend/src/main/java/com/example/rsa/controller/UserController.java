@@ -6,11 +6,11 @@ import com.example.rsa.service.RsaEncryptionService;
 import com.example.rsa.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigInteger;
+import java.util.List;
 
 @RestController
 @RequestMapping("/user")
@@ -22,29 +22,8 @@ public class UserController {
     @Autowired
     private FileService fileService;
 
-
     @Autowired
     private RsaEncryptionService rsaEncryptionService;
-
-    @PostMapping
-    public ResponseEntity<String> addUser(@RequestBody User user) {
-        try {
-            userService.saveUser(user);
-            return ResponseEntity.ok("Kullanıcı başarıyla eklendi.");
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("Kullanıcı eklenirken hata: " + e.getMessage());
-        }
-    }
-
-    @DeleteMapping("/{id}")
-    public ResponseEntity<String> deleteUser(@PathVariable Integer id) {
-        try {
-            userService.deleteUser(id);
-            return ResponseEntity.ok("Kullanıcı başarıyla silindi.");
-        } catch (Exception e) {
-            return ResponseEntity.status(500).body("Kullanıcı silinirken hata: " + e.getMessage());
-        }
-    }
 
     @PutMapping("/{id}/{field}/{newValue}")
     public ResponseEntity<String> updateUser(@PathVariable Integer id, @PathVariable String field, @PathVariable boolean newValue) {
@@ -56,10 +35,10 @@ public class UserController {
         }
     }
 
-    @Operation(summary = "Delete all users and files")
+    @Operation(summary = "Delete/reset all users and files")
     @GetMapping("/clean")
     public void cleanUsersAndFiles() {
-        userService.cleanAllUsers();
+        userService.resetAllUsers();
         fileService.cleanAllFiles();
     }
 
@@ -79,6 +58,11 @@ public class UserController {
         return ResponseEntity.ok("Hazır");
     }
 
+    @Operation(summary = "Get all users")
+    @GetMapping("/all")
+    public List<User> getAllUsers() {
+        return userService.getAllUsers();
+    }
 
 }
 

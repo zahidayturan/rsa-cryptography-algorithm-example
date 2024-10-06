@@ -17,4 +17,18 @@ public class User {
     private Boolean fileReceive;
     private BigInteger eKey;
     private BigInteger dKey;
+
+    public User(int id, String name, boolean publicKey, boolean privateKey, boolean fileUpload, boolean fileRead, boolean fileSend, boolean fileReceive, BigInteger eKey, BigInteger dKey) {
+    this.id = id;
+    this.name = name;
+    this.publicKey = publicKey;
+    this.privateKey = privateKey;
+    this.fileUpload = fileUpload;
+    this.fileRead = fileRead;
+    this.fileSend = fileSend;
+    this.fileReceive = fileReceive;
+    this.eKey = eKey;
+    this.dKey = dKey;
+
+    }
 }
