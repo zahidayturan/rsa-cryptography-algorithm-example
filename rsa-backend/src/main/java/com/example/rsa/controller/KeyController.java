@@ -21,4 +21,10 @@ public class KeyController {
     public BigInteger publicKey() {
         return rsaEncryptionService.getE();
     }
+
+    @Operation(summary = "Get private key")
+    @GetMapping("/private")
+    public BigInteger privateKey() {
+        return rsaEncryptionService.getD();
+    }
 }
