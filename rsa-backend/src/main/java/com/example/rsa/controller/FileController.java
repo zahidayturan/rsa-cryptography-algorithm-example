@@ -39,15 +39,21 @@ public class FileController {
         return fileService.getAllFiles();
     }
 
-    @Operation(summary = "Get public key")
+    @Operation(summary = "Get decrypt file")
     @GetMapping("/get/{fileName}")
     public byte[] getFile(@PathVariable String fileName) throws IOException {
         return fileEncryptionService.decryptFileByName(fileName);
     }
 
-    @Operation(summary = "Get public key")
+    @Operation(summary = "Get file on storage")
     @GetMapping("/get/normal/{fileName}")
     public byte[] getNormalFile(@PathVariable String fileName) throws IOException {
         return fileEncryptionService.fileByName(fileName);
+    }
+
+    @Operation(summary = "Get file info by userId")
+    @GetMapping("/info/{userId}")
+    public List<RsaFile> getFileInfo(@PathVariable Integer userId){
+        return fileService.fileByUserId(userId);
     }
 }

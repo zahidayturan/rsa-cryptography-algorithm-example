@@ -12,6 +12,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Service
@@ -39,6 +40,7 @@ public class FileService {
         RsaFile newFile = new RsaFile();
         newFile.setId(files.size()+1);
         newFile.setName(filename);
+        newFile.setOriginalName(file.getOriginalFilename());
         newFile.setOwnerId(userId);
         newFile.setSize(fileSize);
         newFile.setRecipientId(recipientId);
@@ -69,5 +71,13 @@ public class FileService {
         files.clear();
         System.out.println(getAllFiles());
     }
+
+
+    public List<RsaFile> fileByUserId(Integer userId) {
+        return files.stream()
+                .filter(rsaFile -> rsaFile.getOwnerId().equals(userId))
+                .collect(Collectors.toList());
+    }
+
 
 }
