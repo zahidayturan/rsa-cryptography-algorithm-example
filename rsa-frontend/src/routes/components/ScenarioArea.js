@@ -15,7 +15,7 @@ const UserContainer = ({ user, handleUserToggle }) => {
     const fetchFiles = async () => {
         setLoading(true);
         try {
-            const response = await axios.get(`${Endpoints.USER}/info/${user.id}`);
+            const response = await axios.get(`${Endpoints.FILE}/info/${user.id}`);
             setFileList(response.data);
         } catch (error) {
             console.error("Dosyalar alınırken hata oluştu:", error);

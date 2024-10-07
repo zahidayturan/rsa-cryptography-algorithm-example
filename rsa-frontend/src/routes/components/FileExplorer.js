@@ -4,7 +4,7 @@ import {openFile} from "./api/OpenFile";
 import Endpoints from "../../contants/endpoints";
 
 const FileContainer = ({ owner, fileName, size, id }) => (
-    <div className={"file-container custom-row"} style={{justifyContent:"space-between",alignItems:"center"}}>
+    <div key={id} className={"file-container custom-row"} style={{justifyContent:"space-between",alignItems:"center"}}>
         <div>
             <p className={"font-bold"}>{owner === 1 ? "Alice" : owner === 2 ? "Bob" : "Charlie" }</p>
             <p>{fileName}</p>
@@ -38,6 +38,8 @@ const FileExplorer = () => {
 
     const [loading, setLoading] = useState(false);
     const [files, setFiles] = useState(null);
+    const [publicKey, setPublicKey] = useState(null);
+    const [privateKey, setPrivateKey] = useState(null);
 
     const clean = () => {
         axios.get(`${Endpoints.USER}/clean`)
@@ -66,6 +68,7 @@ const FileExplorer = () => {
 
     useEffect(() => {
         fetchFiles();
+        getKey()
         /*
         const intervalId = setInterval(() => {
             fetchFiles();
@@ -74,6 +77,25 @@ const FileExplorer = () => {
         return () => clearInterval(intervalId);
          */
     }, []);
+
+
+    const getKey = async () => {
+        setLoading(true);
+        try {
+            const publicResponse =  await axios.get(`${Endpoints.KEY}/public`, {
+                responseType: "text",
+            });
+            setPublicKey(publicResponse.data);
+            const privateResponse =  await axios.get(`${Endpoints.KEY}/private`, {
+                responseType: "text",
+            });
+            setPrivateKey(privateResponse.data);
+        } catch (error) {
+            console.error("Abahtar alınırken hata oluştu:", error);
+        } finally {
+            setLoading(false);
+        }
+    };
 
 
     return (
@@ -85,18 +107,23 @@ const FileExplorer = () => {
                     <p onClick={fetchFiles} style={{cursor:"pointer"}}>Yenile</p>
                 </div>
                 <div className={"custom-row"}>
-                    <img src="/icon/public.png" alt="" className={"mid-icon"}/>
+                    <img src="/icon/public.png" alt="" className={"mid-icon"} />
                     <div>
-                        <p style={{color: "var(--orange-color-1)"}}>Geçerli <span>Açık Anahtar</span></p>
-                        <p className={"small-text"}>Anahtar Bekleniyor</p>
+                        <p style={{ color: "var(--orange-color-1)" }}>Geçerli <span>Açık Anahtar</span></p>
+                        <p className={"small-text"} style={{ wordBreak: "break-all" }}>
+                            {publicKey == null ? "Anahtar Bekleniyor" : publicKey}
+                        </p>
                     </div>
                 </div>
+
 
                 <div className={"custom-row"}>
                     <img src="/icon/private.png" alt="" className={"mid-icon"}/>
                     <div>
                         <p style={{color: "var(--yellow-color-1)"}}>Geçerli <span>Kapalı Anahtar</span></p>
-                        <p className={"small-text"}>Anahtar Bekleniyor</p>
+                        <p className={"small-text"} style={{ wordBreak: "break-all" }}>
+                            {privateKey == null ? "Anahtar Bekleniyor" : privateKey}
+                        </p>
                     </div>
                 </div>
                 {

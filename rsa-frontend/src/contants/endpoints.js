@@ -5,6 +5,7 @@ const Endpoints = {
     USER_KEY : `${API_BASE_URL}/user/key`,
     FILE : `${API_BASE_URL}/file`,
     FILE_GET : `${API_BASE_URL}/file/get`,
+    KEY : `${API_BASE_URL}/key`,
 };
 
 export default Endpoints;

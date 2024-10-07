@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 
 const scenarios = [
-    { id: 1, text: 'Birinci Senaryo Yazısı' },
-    { id: 2, text: 'İkinci Senaryo Yazısı' },
-    { id: 3, text: 'Üçüncü Senaryo Yazısı' },
+    { id: 1, text: 'Bu senaryoda tek kullanıcı vardır. Kullanıcı elinde bulunan açık anahtar ile sisteme bir dosya yükler bu dosya şifrelenerek kayıt edilir. Daha sonrasında kullanıcı dosyasına erişmek istediğinde dosyanın şifresi çözülerek kullanıcya iletilir.' },
+    { id: 2, text: 'Bu senaryoda iki kullanıcı vardır. İlk kullanıcı ikinci kullanıcıya bir dosya gönderir bu dosya şifreli olarak gider, ikinci kullanıcı ise bu şifreli dosyayı şifresi çözülmüş şekilde alır.' },
+    { id: 3, text: 'Bu senaryoda üç kullanıcı vardır. Üçüncü kullanıcı hiçbir anahtarı olmadan diğer kullanıcıların dosyalarına erişmek isteyecektir. Aynı zamanda senaryo 1 ve senaryo 2 içerisinde yapılan işlemlere izinsiz erişim sağlayacaktır. Burada şifrelenmiş dosyalarla karşılaşması beklenmektedir.' },
 ];
 
 const Scenarios = () => {
@@ -23,7 +23,10 @@ const Scenarios = () => {
                 ))}
             </div>
             {activeScenario ? (
-                <p>{scenarios.find(scenario => scenario.id === activeScenario)?.text}</p>
+                <div>
+                    <p>{scenarios.find(scenario => scenario.id === activeScenario)?.text}</p>
+                </div>
+
             ) : (
                 <p>Lütfen bir senaryo seçin</p>
             )}
