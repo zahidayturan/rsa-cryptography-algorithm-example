@@ -1,5 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import axios from "axios";
+import {openFile} from "./api/OpenFile";
+import Endpoints from "../../contants/endpoints";
 
 const FileContainer = ({ owner, fileName, size, id }) => (
     <div className={"file-container custom-row"} style={{justifyContent:"space-between",alignItems:"center"}}>
@@ -9,12 +11,25 @@ const FileContainer = ({ owner, fileName, size, id }) => (
             <p className={"x-small-text"}>{size}</p>
         </div>
         <div className={"custom-row"} style={{gap:8}}>
-            <div className={"icon-box"} style={{backgroundColor:"var(--orange-color-1)"}}>
-                <img src="/icon/bin.png" alt="Remove File" className={"mini-icon"}/>
+            <div className={"custom-column"}>
+                <div className={"icon-box"} style={{backgroundColor:"var(--orange-color-1)"}} onClick={() => openFile(fileName,false)}>
+                    <img src="/icon/file.png" alt="Open File" className={"mini-icon"}/>
+                </div>
+                <p className={"x-small-text"}>Şifreli</p>
             </div>
-            <div className={"icon-box"} style={{backgroundColor:"var(--yellow-color-1)"}}>
-                <img src="/icon/file.png" alt="Open File" className={"mini-icon"}/>
+            <div className={"custom-column"}>
+                <div className={"icon-box"} style={{backgroundColor:"var(--green-color-1)"}} onClick={() => openFile(fileName,true)}>
+                    <img src="/icon/file.png" alt="Open File" className={"mini-icon"}/>
+                </div>
+                <p className={"x-small-text"}>Şifresiz</p>
             </div>
+            <div className={"custom-column"}>
+                <div className={"icon-box"} style={{backgroundColor:"var(--red-color-1)"}}>
+                    <img src="/icon/bin.png" alt="Remove File" className={"mini-icon"}/>
+                </div>
+                <p className={"x-small-text"}>Sil</p>
+            </div>
+
         </div>
     </div>
 );
@@ -25,7 +40,7 @@ const FileExplorer = () => {
     const [files, setFiles] = useState(null);
 
     const clean = () => {
-        axios.get(`http://localhost:8080/user/clean`)
+        axios.get(`${Endpoints.USER}/clean`)
             .then(response => {
                 console.log("Hey şey başarıyla silindi:", response.data);
             })
@@ -39,7 +54,7 @@ const FileExplorer = () => {
         console.log("Dosyalar alınıyor...");
         setLoading(true);
         try {
-            const response = await axios.get('http://localhost:8080/file/all');
+            const response = await axios.get(`${Endpoints.FILE}/all`);
             setFiles(response.data);
         } catch (error) {
             console.log(error);

@@ -2,6 +2,9 @@ const API_BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
 const Endpoints = {
     USER : `${API_BASE_URL}/user`,
+    USER_KEY : `${API_BASE_URL}/user/key`,
+    FILE : `${API_BASE_URL}/file`,
+    FILE_GET : `${API_BASE_URL}/file/get`,
 };
 
 export default Endpoints;

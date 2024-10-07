@@ -1,9 +1,36 @@
 import React, {useEffect, useState} from 'react';
 import Switch from "./Switch";
 import axios from 'axios';
+import Modal from "react-modal";
+import { openFile } from './api/OpenFile';
+import Endpoints from "../../contants/endpoints";
 
 const UserContainer = ({ user, handleUserToggle }) => {
     const [loading, setLoading] = useState(false);
+
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [fileList, setFileList] = useState([]);
+
+
+    const fetchFiles = async () => {
+        setLoading(true);
+        try {
+            const response = await axios.get(`${Endpoints.USER}/info/${user.id}`);
+            setFileList(response.data);
+        } catch (error) {
+            console.error("Dosyalar alınırken hata oluştu:", error);
+        }
+        setLoading(false);
+    };
+
+    const openModal = () => {
+        setIsModalOpen(true);
+        fetchFiles();
+    };
+
+    const closeModal = () => {
+        setIsModalOpen(false);
+    };
 
     const handleToggle = (field,newValue) => {
         handleUserToggle(user.id, field,newValue);
@@ -26,7 +53,7 @@ const UserContainer = ({ user, handleUserToggle }) => {
             formData.append('userId', userId);
             formData.append('recipientId', recipientId);
 
-            axios.post(`http://localhost:8080/file`, formData, {
+            axios.post(Endpoints.FILE, formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data'
                 }
@@ -41,6 +68,7 @@ const UserContainer = ({ user, handleUserToggle }) => {
         }
         setLoading(false);
     };
+
 
 
 
@@ -89,7 +117,7 @@ const UserContainer = ({ user, handleUserToggle }) => {
                         </p>
                         <div className={"user-operation-button"}
                              style={{ backgroundColor: user.fileUpload && "rgb(0,176,176)", cursor: user.fileUpload && "pointer" }}
-                             onClick={() => document.getElementById(`fileInput-${user.id}`).click()} // Butona tıkladığında dosya seçme penceresini aç
+                             onClick={() => document.getElementById(`fileInput-${user.id}`).click()}
                         >
                             Dosya Yükle
                         </div>
@@ -105,19 +133,47 @@ const UserContainer = ({ user, handleUserToggle }) => {
                     </div>
 
                 </div>
-                <div className={"custom-row"} style={{gap:0}}>
+                <div className={"custom-row"} style={{ gap: 0 }}>
                     <Switch
                         isOn={user.readFiles}
-                        handleToggle={() => handleToggle('readFiles',!user.readFiles)}
-                        id={user.id+"readFiles"}
+                        handleToggle={() => handleToggle("readFiles", !user.readFiles)}
+                        id={user.id + "readFiles"}
                     />
                     <div>
                         <p>Dosya Okuma</p>
                         <p className={"x-small-text font-bold"}>{user.readFiles ? "Açık" : "Kapalı"}</p>
-                        <div className={"user-operation-button"} style={{ backgroundColor: user.readFiles && "rgb(16,64,59)",cursor: user.readFiles && "pointer" }}>
+                        <div className={"user-operation-button"} style={{backgroundColor: user.readFiles && "rgb(16,64,59)", cursor: user.readFiles && "pointer",}} onClick={user.readFiles ? openModal : null}>
                             Dosya Görüntüle
                         </div>
                     </div>
+                    <Modal isOpen={isModalOpen} onRequestClose={closeModal} contentLabel="Dosyalar">
+                        <div className={"custom-row"} style={{justifyContent:"space-between"}}>
+                            <h2>{`Kullanıcı Dosyaları : ${user.name}`}</h2>
+                            <p onClick={closeModal} style={{cursor:"pointer"}}>Kapat</p>
+                        </div>
+                        <p style={{marginTop:8,marginBottom:16}}>{fileList.length} adet dosya listelendi</p>
+                        {loading ? (<p>Yükleniyor...</p>) : (
+                                fileList.map((file) => (
+                                    <div key={file.id} style={{backgroundColor:"var(--secondary-color-1)",padding:8,borderRadius:8}}>
+                                        <div className={"custom-row"} style={{justifyContent:"space-between",alignItems:"center"}}>
+                                            <div>
+                                                <p>{file.originalName}</p>
+                                                <p className={"x-small-text"}>{file.size} bayt</p>
+                                            </div>
+                                            <div
+                                                className={"icon-box"}
+                                                style={{ backgroundColor: "var(--green-color-1)", cursor: "pointer" }}
+                                                onClick={() => openFile(file.name,true)}
+                                            >
+                                                <img src="/icon/file.png" alt="Open File" className={"mini-icon"} />
+                                            </div>
+                                        </div>
+
+                                    </div>
+                                ))
+                        )}
+
+                    </Modal>
                 </div>
             </div>
         </div>
@@ -133,11 +189,11 @@ const ScenarioArea = () => {
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const response = await axios.get(`http://localhost:8080/user/all`);
+                const response = await axios.get(`${Endpoints.USER}/all`);
                 const users = response.data;
                 setUsers(users);
             } catch (error) {
-                console.log('Sepetiniz yüklenirken bir hata oluştu');
+                console.log('Kullanıcılar yüklenirken bir hata oluştu');
             } finally {
                 setLoading(false);
             }
@@ -145,8 +201,6 @@ const ScenarioArea = () => {
         if (users === null || users.length === 0) {
             fetchUser();
             console.log(users);
-        } else {
-            console.log('No user data found in localStorage');
         }
     }, []);
 
@@ -186,7 +240,7 @@ const ScenarioArea = () => {
                 : user
         ));
 
-        axios.put(`http://localhost:8080/user/${userId}/${field}/${newValue}`)
+        axios.put(`${Endpoints.USER}/${userId}/${field}/${newValue}`)
             .then(response => {
                 console.log("Kullanıcı başarıyla güncellendi:", response.data);
             })
@@ -195,7 +249,7 @@ const ScenarioArea = () => {
             });
 
         if (field === "publicKey") {
-            axios.get(`http://localhost:8080/user/key/eKey/${userId}`)
+            axios.get(`${Endpoints.USER_KEY}/eKey/${userId}`)
                 .then(response => {
                     updateEKeys(userId, response.data);
                     console.log("Kullanıcı public key alındı:", response);
@@ -205,7 +259,7 @@ const ScenarioArea = () => {
                 });
         }
         if (field === "privateKey") {
-            axios.get(`http://localhost:8080/user/key/dKey/${userId}`)
+            axios.get(`${Endpoints.USER_KEY}/dKey/${userId}`)
                 .then(response => {
                     updateDKeys(userId, response.data);
                     console.log("Kullanıcı private key alındı:", response);
