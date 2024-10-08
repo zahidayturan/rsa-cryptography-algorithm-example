@@ -12,6 +12,7 @@ const UserContainer = ({ userId }) => {
     const [isReadModalOpen, setIsReadModalOpen] = useState(false);
     const [isReceiveModalOpen, setIsReceiveModalOpen] = useState(false);
     const [readFileList, setReadFileList] = useState([]);
+    const [receiveFileList, setReceiveFileList] = useState([]);
     const [recipientId, setRecipientId] = useState(null);
     const [isUserSelectModalOpen, setIsUserSelectModalOpen] = useState(false);
 
@@ -49,8 +50,19 @@ const UserContainer = ({ userId }) => {
     const fetchReadFiles = async () => {
         setLoading(true);
         try {
-            const response = await axios.get(`${Endpoints.FILE}/info/${user.id}`);
+            const response = await axios.get(`${Endpoints.FILE}/owner/${user.id}`);
             setReadFileList(response.data);
+        } catch (error) {
+            console.error("Dosyalar alınırken hata oluştu:", error);
+        }
+        setLoading(false);
+    };
+
+    const fetchReceiveFiles = async () => {
+        setLoading(true);
+        try {
+            const response = await axios.get(`${Endpoints.FILE}/recipient/${user.id}`);
+            setReceiveFileList(response.data);
         } catch (error) {
             console.error("Dosyalar alınırken hata oluştu:", error);
         }
@@ -68,6 +80,7 @@ const UserContainer = ({ userId }) => {
 
     const openReceiveModal = () => {
         setIsReceiveModalOpen(true);
+        fetchReceiveFiles();
     };
 
     const closeReceiveModal = () => {
@@ -253,7 +266,7 @@ const UserContainer = ({ userId }) => {
                                                 <div
                                                     className={"icon-box"}
                                                     style={{ backgroundColor: "var(--green-color-1)", cursor: "pointer" }}
-                                                    onClick={() => openFile(file.name,true)}
+                                                    onClick={() => openFile(file.name,file.ownerId)}
                                                 >
                                                     <img src="/icon/file.png" alt="Open File" className={"mini-icon"} />
                                                 </div>
@@ -262,7 +275,6 @@ const UserContainer = ({ userId }) => {
                                         </div>
                                     ))
                                 )}
-
                             </Modal>
                         </div>
                         <div className={"custom-row"} style={{gap:0}}>
@@ -332,6 +344,27 @@ const UserContainer = ({ userId }) => {
                                     <h2>{`${user.name} Kullanıcısına Gelen Dosyalar`}</h2>
                                     <p onClick={closeReceiveModal} style={{cursor:"pointer"}}>Kapat</p>
                                 </div>
+                                <p style={{marginTop:8,marginBottom:16}}>{receiveFileList.length} adet dosya listelendi</p>
+                                {loading ? (<p>Yükleniyor...</p>) : (
+                                    receiveFileList.map((file) => (
+                                        <div key={file.id} style={{backgroundColor:"var(--secondary-color-1)",padding:8,borderRadius:8,marginBottom:8}}>
+                                            <div className={"custom-row"} style={{justifyContent:"space-between",alignItems:"center"}}>
+                                                <div>
+                                                    <p>{file.originalName}</p>
+                                                    <p className={"x-small-text"}>{file.size} bayt</p>
+                                                    <p className={"x-small-text"} style={{fontStyle:"italic"}}>{file.ownerId === 1 ? "Bu dosyayı Alice gönderdi" : file.ownerId === 2 ? "Bu dosyayı Bob gönderdi" : "Bu dosyayı Charlie gönderdi" }</p>
+                                                </div>
+                                                <div
+                                                    className={"icon-box"}
+                                                    style={{ backgroundColor: "var(--green-color-1)", cursor: "pointer" }}
+                                                    onClick={() => openFile(file.name,file.recipientId)}
+                                                >
+                                                    <img src="/icon/file.png" alt="Open File" className={"mini-icon"} />
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ))
+                                )}
                             </Modal>
                         </div>
                     </div>

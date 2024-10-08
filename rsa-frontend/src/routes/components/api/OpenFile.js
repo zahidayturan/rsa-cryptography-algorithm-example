@@ -1,11 +1,9 @@
 import axios from "axios";
 import Endpoints from "../../../contants/endpoints";
 
-export const openFile = async (fileName,isDecrypt) => {
+export const openFile = async (fileName,userId) => {
     try {
-        const response = isDecrypt ? await axios.get(`${Endpoints.FILE_GET}/${fileName}`, {
-            responseType: "blob",
-        }) : await axios.get(`${Endpoints.FILE_GET}/normal/${fileName}`, {
+        const response =  await axios.get(`${Endpoints.FILE_GET}/${fileName}/${userId}`, {
             responseType: "blob",
         });
         const fileBlob = new Blob([response.data]);

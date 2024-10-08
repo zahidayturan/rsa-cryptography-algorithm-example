@@ -15,13 +15,13 @@ const FileContainer = ({ owner, recipient ,fileName, size, id }) => (
         </div>
         <div className={"custom-row"} style={{gap:8}}>
             <div className={"custom-column"}>
-                <div className={"icon-box"} style={{backgroundColor:"var(--orange-color-1)"}} onClick={() => openFile(fileName,false)}>
+                <div className={"icon-box"} style={{backgroundColor:"var(--orange-color-1)"}} onClick={() => openFile(fileName,99)}>
                     <img src="/icon/file.png" alt="Open File" className={"mini-icon"}/>
                 </div>
                 <p className={"x-small-text"}>Şifreli</p>
             </div>
             <div className={"custom-column"}>
-                <div className={"icon-box"} style={{backgroundColor:"var(--green-color-1)"}} onClick={() => openFile(fileName,true)}>
+                <div className={"icon-box"} style={{backgroundColor:"var(--green-color-1)"}} onClick={() => openFile(fileName,98)}>
                     <img src="/icon/file.png" alt="Open File" className={"mini-icon"}/>
                 </div>
                 <p className={"x-small-text"}>Şifresiz</p>
