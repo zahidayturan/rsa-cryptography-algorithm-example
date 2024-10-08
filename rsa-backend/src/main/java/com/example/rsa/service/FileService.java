@@ -3,8 +3,10 @@ package com.example.rsa.service;
 import com.example.rsa.model.RsaFile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -21,12 +23,13 @@ public class FileService {
     List<RsaFile> files = new ArrayList<>();
 
     @Autowired
-    private FileEncryptionService encryptionService;
+    private FileEncryptionService fileEncryptionService;
+
+    @Autowired
+    private UserService userService;
 
     public void saveFile(MultipartFile file,Integer userId,Integer recipientId) throws IOException {
-
-
-        byte[] encryptedFile = encryptionService.encryptFile(file.getBytes());
+        byte[] encryptedFile = fileEncryptionService.encryptFile(file.getBytes());
         long fileSize = file.getSize();
         String directory = "encrypted_files/";
         String filename = (files.size()+1)+file.getOriginalFilename();
@@ -79,5 +82,38 @@ public class FileService {
                 .collect(Collectors.toList());
     }
 
+    public List<RsaFile> fileByRecipientId(Integer recipientId) {
+        return files.stream()
+                .filter(rsaFile -> rsaFile.getRecipientId().equals(recipientId))
+                .collect(Collectors.toList());
+    }
+
+    public byte[] getFile(String fileName, Integer userId) throws IOException {
+        if (userId == 99) { // Admin access 99 - encrypted file
+            return fileEncryptionService.fileByName(fileName);
+        } else if (userId == 98) { // Admin access 98 - decrypted file
+            return fileEncryptionService.decryptFileByName(fileName);
+        } else {
+            RsaFile file = findFileByName(fileName);
+            if (file != null) {
+                if (file.getOwnerId().equals(userId) || file.getRecipientId().equals(userId)) {
+                    return fileEncryptionService.decryptFileByName(fileName); // User authorized - return decrypted
+                } else {
+                    return fileEncryptionService.fileByName(fileName); // User not authorized - return encrypted
+                }
+            } else {
+                throw new FileNotFoundException("File not found");
+            }
+        }
+    }
+
+    private RsaFile findFileByName(String fileName) {
+        for (RsaFile file : files) {
+            if (file.getName().equals(fileName)) {
+                return file;
+            }
+        }
+        return null;
+    }
 
 }

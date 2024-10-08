@@ -40,20 +40,20 @@ public class FileController {
     }
 
     @Operation(summary = "Get decrypt file")
-    @GetMapping("/get/{fileName}")
-    public byte[] getFile(@PathVariable String fileName) throws IOException {
-        return fileEncryptionService.decryptFileByName(fileName);
-    }
-
-    @Operation(summary = "Get file on storage")
-    @GetMapping("/get/normal/{fileName}")
-    public byte[] getNormalFile(@PathVariable String fileName) throws IOException {
-        return fileEncryptionService.fileByName(fileName);
+    @GetMapping("/get/{fileName}/{userId}")
+    public byte[] getFile(@PathVariable String fileName,@PathVariable Integer userId) throws IOException {
+        return fileService.getFile(fileName,userId);
     }
 
     @Operation(summary = "Get file info by userId")
-    @GetMapping("/info/{userId}")
+    @GetMapping("/owner/{userId}")
     public List<RsaFile> getFileInfo(@PathVariable Integer userId){
         return fileService.fileByUserId(userId);
+    }
+
+    @Operation(summary = "Get file info by recipientId")
+    @GetMapping("/recipient/{userId}")
+    public List<RsaFile> getFileInfoByRecipientId(@PathVariable Integer userId){
+        return fileService.fileByRecipientId(userId);
     }
 }
