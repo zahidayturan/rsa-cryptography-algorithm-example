@@ -9,8 +9,11 @@ import { toast } from "react-toastify";
 const UserContainer = ({ userId }) => {
     const [loading, setLoading] = useState(false);
     const [user, setUser] = useState(null);
-    const [isModalOpen, setIsModalOpen] = useState(false);
-    const [fileList, setFileList] = useState([]);
+    const [isReadModalOpen, setIsReadModalOpen] = useState(false);
+    const [isReceiveModalOpen, setIsReceiveModalOpen] = useState(false);
+    const [readFileList, setReadFileList] = useState([]);
+    const [recipientId, setRecipientId] = useState(null);
+    const [isUserSelectModalOpen, setIsUserSelectModalOpen] = useState(false);
 
     const fetchUser = async () => {
         setLoading(true);
@@ -43,34 +46,47 @@ const UserContainer = ({ userId }) => {
     };
 
 
-    const fetchFiles = async () => {
+    const fetchReadFiles = async () => {
         setLoading(true);
         try {
             const response = await axios.get(`${Endpoints.FILE}/info/${user.id}`);
-            setFileList(response.data);
+            setReadFileList(response.data);
         } catch (error) {
             console.error("Dosyalar alınırken hata oluştu:", error);
         }
         setLoading(false);
     };
 
-    const openModal = () => {
-        setIsModalOpen(true);
-        fetchFiles();
+    const openReadModal = () => {
+        setIsReadModalOpen(true);
+        fetchReadFiles();
     };
 
-    const closeModal = () => {
-        setIsModalOpen(false);
+    const closeReadModal = () => {
+        setIsReadModalOpen(false);
+    };
+
+    const openReceiveModal = () => {
+        setIsReceiveModalOpen(true);
+    };
+
+    const closeReceiveModal = () => {
+        setIsReceiveModalOpen(false);
+    };
+
+    const openUserSelectModal = () => setIsUserSelectModalOpen(true);
+    const closeUserSelectModal = () => {
+        setIsUserSelectModalOpen(false);
+        setRecipientId(null);
     };
 
 
     const handleFileChange = (event, userId, recipientId) => {
         setLoading(true);
         const file = event.target.files[0];
-
         if (file) {
             if (file.size > 512) {
-                toast.error("Dosya boyutu 256 byte'ı geçemez. Lütfen daha küçük bir dosya yükleyin.");
+                toast.error("Dosya boyutu 512 byte'ı geçemez. Lütfen daha küçük bir dosya yükleyin.");
                 setLoading(false);
                 return;
             }
@@ -100,6 +116,50 @@ const UserContainer = ({ userId }) => {
         setLoading(false);
     };
 
+    const handleUserSelectForRecipient = (event, userId) => {
+        setLoading(true);
+        const file = event.target.files[0];
+        if (file) {
+            if (file.size > 512) {
+                toast.error("Dosya boyutu 512 byte'ı geçemez. Lütfen daha küçük bir dosya yükleyin.");
+                setLoading(false);
+                return;
+            }
+
+            if (!recipientId) {
+                toast.error("Göndereceğiniz kişiyi seçmediniz.");
+                setLoading(false);
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('userId', userId);
+            formData.append('recipientId', recipientId);
+
+            axios.post(Endpoints.FILE, formData, {
+                headers: {
+                    'Content-Type': 'multipart/form-data'
+                }
+            }).then(response => {
+                toast.success("Dosya başarıyla yüklendi");
+                console.log("Dosya başarıyla yüklendi:", response.data);
+                closeUserSelectModal();
+            }).catch(error => {
+                toast.error("Dosya yüklenemedi");
+                console.error("Dosya yüklenirken hata oluştu:", error);
+            });
+        } else {
+            toast.error("Dosya seçmediniz");
+        }
+        setLoading(false);
+    };
+
+    const handleRecipientSelect = (id) => {
+        setRecipientId(id);
+    };
+
+
     return (
         <>
             {loading && <div className={"loading-overlay"}><div className={"main-spinner"}></div></div>}
@@ -115,7 +175,7 @@ const UserContainer = ({ userId }) => {
                         />
                         <div>
                             <p>Açık Anahtar</p>
-                            <p className={"x-small-text font-bold"}>{user.publicKey ? "Hazır" : "Kapalı"}</p>
+                            <p className={"x-small-text font-bold"}>{user.publicKey ? user.EKey === null ? "Bekleniyor" : "Hazır" : "Kapalı"}</p>
                         </div>
                     </div>
 
@@ -127,7 +187,7 @@ const UserContainer = ({ userId }) => {
                         />
                         <div>
                             <p>Kapalı Anahtar</p>
-                            <p className={"x-small-text font-bold"}>{user.privateKey ? "Hazır" : "Kapalı"}</p>
+                            <p className={"x-small-text font-bold"}>{user.privateKey ? user.Dkey === null ? "Bekleniyor" : "Hazır" : "Kapalı"}</p>
                         </div>
                     </div>
 
@@ -170,23 +230,25 @@ const UserContainer = ({ userId }) => {
                             <div>
                                 <p>Dosya Okuma</p>
                                 <p className={"x-small-text font-bold"}>{user.fileRead ? "Açık" : "Kapalı"}</p>
-                                <div className={"user-operation-button"} style={{backgroundColor: user.fileRead && "rgb(16,64,59)", cursor: user.fileRead && "pointer",}} onClick={user.fileRead ? openModal : null}>
+                                <div className={"user-operation-button"} style={{backgroundColor: user.fileRead && "rgb(16,64,59)", cursor: user.fileRead && "pointer",}} onClick={user.fileRead ? openReadModal : null}>
                                     Dosya Görüntüle
                                 </div>
                             </div>
-                            <Modal isOpen={isModalOpen} onRequestClose={closeModal} contentLabel="Dosyalar">
+                            <Modal isOpen={isReadModalOpen} onRequestClose={closeReadModal} contentLabel="Dosyalar">
                                 <div className={"custom-row"} style={{justifyContent:"space-between"}}>
                                     <h2>{`Kullanıcı Dosyaları : ${user.name}`}</h2>
-                                    <p onClick={closeModal} style={{cursor:"pointer"}}>Kapat</p>
+                                    <p onClick={closeReadModal} style={{cursor:"pointer"}}>Kapat</p>
                                 </div>
-                                <p style={{marginTop:8,marginBottom:16}}>{fileList.length} adet dosya listelendi</p>
+                                <p style={{marginTop:8,marginBottom:16}}>{readFileList.length} adet dosya listelendi</p>
                                 {loading ? (<p>Yükleniyor...</p>) : (
-                                    fileList.map((file) => (
-                                        <div key={file.id} style={{backgroundColor:"var(--secondary-color-1)",padding:8,borderRadius:8}}>
+                                    readFileList.map((file) => (
+                                        <div key={file.id} style={{backgroundColor:"var(--secondary-color-1)",padding:8,borderRadius:8,marginBottom:8}}>
                                             <div className={"custom-row"} style={{justifyContent:"space-between",alignItems:"center"}}>
                                                 <div>
                                                     <p>{file.originalName}</p>
                                                     <p className={"x-small-text"}>{file.size} bayt</p>
+                                                    <p className={"x-small-text"}>{file.recipientId === userId ? "Bu dosyayı kendiniz için yüklediniz" :
+                                                         <p className={"x-small-text"} style={{fontStyle:"italic"}}>{file.recipientId === 1 ? "Bu dosyayı Alice için yüklediniz" : file.recipientId === 2 ? "Bu dosyayı Bob için yüklediniz" : "Bu dosyayı Charlie için yüklediniz" }</p>}</p>
                                                 </div>
                                                 <div
                                                     className={"icon-box"}
@@ -201,6 +263,75 @@ const UserContainer = ({ userId }) => {
                                     ))
                                 )}
 
+                            </Modal>
+                        </div>
+                        <div className={"custom-row"} style={{gap:0}}>
+                            <Switch
+                                isOn={user.fileSend}
+                                handleToggle={() => handleToggle('fileSend',!user.fileSend)}
+                                id={user.id+"fileSend"}
+                            />
+                            <div>
+                                <p>Dosya Gönderme</p>
+                                <p className={"x-small-text font-bold"}>
+                                    {user.fileSend ? "Açık" : "Kapalı"}
+                                </p>
+                                <div className={"user-operation-button"}
+                                     style={{ backgroundColor: user.fileSend && "rgb(175,191,54)", cursor: user.fileSend && "pointer" }}
+                                     onClick={openUserSelectModal}
+                                >
+                                    Dosya Gönder
+                                </div>
+
+                                {isUserSelectModalOpen && (
+                                    <Modal isOpen={isUserSelectModalOpen} onRequestClose={closeUserSelectModal} contentLabel="Users">
+                                        <div className={"custom-row"} style={{ justifyContent: "space-between" }}>
+                                            <h3>Gönderilecek dosyayı ve kime gönderileceğini seçiniz</h3>
+                                            <p onClick={closeUserSelectModal} style={{ cursor: "pointer" }}>Kapat</p>
+                                        </div>
+                                        <div>
+                                            {user.name !== "Alice" && (
+                                                <p onClick={() => handleRecipientSelect(1)} style={{ color: recipientId === 1 ? "green" : "black" ,padding:8,cursor:"pointer"}}>Alice</p>
+                                            )}
+                                            {user.name !== "Bob" && (
+                                                <p onClick={() => handleRecipientSelect(2)} style={{ color: recipientId === 2 ? "green" : "black" ,padding:8,cursor:"pointer"}}>Bob</p>
+                                            )}
+                                            {user.name !== "Charlie" && (
+                                                <p onClick={() => handleRecipientSelect(3)} style={{ color: recipientId === 3 ? "green" : "black" ,padding:8,cursor:"pointer"}}>Charlie</p>
+                                            )}
+                                        </div>
+                                        {recipientId && (
+                                            <input
+                                                type="file"
+                                                id={`fileSend-${user.id}`}
+                                                accept=".txt,.pdf,.doc,.docx"
+                                                onChange={(event) => handleUserSelectForRecipient(event, user.id)}
+                                            />
+                                        )}
+                                    </Modal>
+                                )}
+
+                            </div>
+
+                        </div>
+                        <div className={"custom-row"} style={{ gap: 0 }}>
+                            <Switch
+                                isOn={user.fileReceive}
+                                handleToggle={() => handleToggle("fileReceive", !user.fileReceive)}
+                                id={user.id + "fileReceive"}
+                            />
+                            <div>
+                                <p>Dosya Alma</p>
+                                <p className={"x-small-text font-bold"}>{user.fileReceive ? "Açık" : "Kapalı"}</p>
+                                <div className={"user-operation-button"} style={{backgroundColor: user.fileReceive && "rgb(134,149,11)", cursor: user.fileReceive && "pointer",}} onClick={user.fileReceive ? openReceiveModal : null}>
+                                    Dosya Al
+                                </div>
+                            </div>
+                            <Modal isOpen={isReceiveModalOpen} onRequestClose={closeReceiveModal} contentLabel="Dosyalar">
+                                <div className={"custom-row"} style={{justifyContent:"space-between"}}>
+                                    <h2>{`${user.name} Kullanıcısına Gelen Dosyalar`}</h2>
+                                    <p onClick={closeReceiveModal} style={{cursor:"pointer"}}>Kapat</p>
+                                </div>
                             </Modal>
                         </div>
                     </div>
@@ -231,7 +362,7 @@ const ScenarioArea = () => {
             fetchUser();
             console.log(users);
         }
-    }, []);
+    }, );
 
 
     const handleUserClick = (userId) => {

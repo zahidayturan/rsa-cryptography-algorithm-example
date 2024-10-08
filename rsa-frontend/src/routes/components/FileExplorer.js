@@ -3,10 +3,13 @@ import axios from "axios";
 import {openFile} from "./api/OpenFile";
 import Endpoints from "../../contants/endpoints";
 
-const FileContainer = ({ owner, fileName, size, id }) => (
+const FileContainer = ({ owner, recipient ,fileName, size, id }) => (
     <div key={id} className={"file-container custom-row"} style={{justifyContent:"space-between",alignItems:"center"}}>
         <div>
-            <p className={"font-bold"}>{owner === 1 ? "Alice" : owner === 2 ? "Bob" : "Charlie" }</p>
+            <div style={{display:"flex",alignItems:"end",gap:6}}>
+                <p className={"font-bold"}>{owner === 1 ? "Alice" : owner === 2 ? "Bob" : "Charlie" }</p>
+                {recipient !== owner && <p className={"x-small-text"} style={{fontStyle:"italic"}}>{recipient === 1 ? "to Alice" : recipient === 2 ? "to Bob" : "to Charlie" }</p>}
+            </div>
             <p>{fileName}</p>
             <p className={"x-small-text"}>{size}</p>
         </div>
@@ -109,7 +112,7 @@ const FileExplorer = () => {
                 {
                     (files != null && files.length !== 0) ?
                         files.map((file) => (
-                            <FileContainer key={file.id} owner={file.ownerId} fileName={file.name} size={`${file.size} bayt`} id={file.id} />
+                            <FileContainer key={file.id} owner={file.ownerId} recipient={file.recipientId} fileName={file.name} size={`${file.size} bayt`} id={file.id} />
                         )) : <div style={{color:"white",textAlign:"center",padding:"12px 0",backgroundColor:"black",borderRadius:8,fontSize:14}}>Dosya yüklenmemiş</div>
 
                 }

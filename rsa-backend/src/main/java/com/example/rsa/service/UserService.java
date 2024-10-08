@@ -21,9 +21,9 @@ public class UserService {
     }
 
     private void addInitialUsers() {
-        User alice = new User(1, "Alice", false, false, false, false, false, false, new BigInteger("0"), new BigInteger("0"));
-        User bob = new User(2, "Bob", false, false, false, false, false, false, new BigInteger("0"), new BigInteger("0"));
-        User charlie = new User(3, "Charlie", false, false, false, false, false, false, new BigInteger("0"), new BigInteger("0"));
+        User alice = new User(1, "Alice", false, false, false, false, false, false, null, null);
+        User bob = new User(2, "Bob", false, false, false, false, false, false, null, null);
+        User charlie = new User(3, "Charlie", false, false, false, false, false, false, null, null);
 
         users.add(alice);
         users.add(bob);
