@@ -106,6 +106,13 @@ const FileExplorer = () => {
                     <p className={"title-text"}><span>Dosya</span> Gezgini</p>
                     <p onClick={fetchFiles} style={{cursor:"pointer"}}>Yenile</p>
                 </div>
+                {
+                    (files != null && files.length !== 0) ?
+                        files.map((file) => (
+                            <FileContainer key={file.id} owner={file.ownerId} fileName={file.name} size={`${file.size} bayt`} id={file.id} />
+                        )) : <div style={{color:"white",textAlign:"center",padding:"12px 0",backgroundColor:"black",borderRadius:8,fontSize:14}}>Dosya yüklenmemiş</div>
+
+                }
                 <div className={"custom-row"}>
                     <img src="/icon/public.png" alt="" className={"mid-icon"} />
                     <div>
@@ -115,8 +122,6 @@ const FileExplorer = () => {
                         </p>
                     </div>
                 </div>
-
-
                 <div className={"custom-row"}>
                     <img src="/icon/private.png" alt="" className={"mid-icon"}/>
                     <div>
@@ -126,13 +131,6 @@ const FileExplorer = () => {
                         </p>
                     </div>
                 </div>
-                {
-                    (files != null && files.length !== 0) ?
-                    files.map((file) => (
-                    <FileContainer key={file.id} owner={file.ownerId} fileName={file.name} size={`${file.size} bayt`} id={file.id} />
-                )) : <div style={{color:"white",textAlign:"center",padding:"12px 0",backgroundColor:"black",borderRadius:8,fontSize:14}}>Dosya eklenmemiş</div>
-
-                }
                 <div className={"remove-button"} onClick={clean}>
                     <img src="/icon/bin.png" alt="Clear System" className={"mini-icon"}/>
                     <p className={"small-text"}>Sistemi Temizle</p>

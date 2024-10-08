@@ -212,9 +212,9 @@ span{
 
 .file-explorer{
   background-color: var(--black-color-1);
-  width: 40%;
+  width: 45%;
   height: max-content;
-  min-width: 200px;
+  min-width: 240px;
   border-radius: 12px;
   padding: 12px;
   gap: 12px;
