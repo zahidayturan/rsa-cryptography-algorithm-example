@@ -274,4 +274,28 @@ span{
   text-align: center;
   font-size: 13px;
 }
+.wrap-gap{
+  column-gap: 36px;
+}
+
+
+
+@media (max-width: 1144px) {
+  .home{
+    flex-direction: column;
+  }
+
+  .file-explorer{
+    width: auto;
+  }
+
+  .wrap-row{
+    flex-wrap: wrap;
+  }
+
+  .wrap-gap{
+    column-gap: 32px;
+  }
+}
+
 

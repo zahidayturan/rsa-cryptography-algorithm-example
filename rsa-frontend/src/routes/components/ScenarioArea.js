@@ -211,7 +211,7 @@ const UserContainer = ({ userId }) => {
                             <img src="/icon/hacker.png" alt="Open Spy Menu" className={"mini-icon"} />
                         </div></p>}
                         {isSpyModalOpen && (
-                            <Modal isOpen={isSpyModalOpen} onRequestClose={closeSpyModal} contentLabel="Casus Menüsü">
+                            <Modal isOpen={isSpyModalOpen} onRequestClose={closeSpyModal} contentLabel="Casus Menüsü" ariaHideApp={false}>
                                 <div className={"custom-row"} style={{justifyContent:"space-between"}}>
                                     <h2>{`Bütün Dosyalar`}</h2>
                                     <p onClick={closeSpyModal} style={{cursor:"pointer"}}>Kapat</p>
@@ -266,7 +266,7 @@ const UserContainer = ({ userId }) => {
                         </div>
                     </div>
 
-                    <div className={"custom-row"} style={{gap:36}}>
+                    <div className={"custom-row wrap-row wrap-gap"}>
                         <div className={"custom-row"} style={{gap:0}}>
                             <Switch
                                 isOn={user.fileUpload}
@@ -309,7 +309,7 @@ const UserContainer = ({ userId }) => {
                                     Dosya Görüntüle
                                 </div>
                             </div>
-                            <Modal isOpen={isReadModalOpen} onRequestClose={closeReadModal} contentLabel="Dosyalar">
+                            <Modal isOpen={isReadModalOpen} onRequestClose={closeReadModal} contentLabel="Dosyalar" ariaHideApp={false}>
                                 <div className={"custom-row"} style={{justifyContent:"space-between"}}>
                                     <h2>{`Kullanıcı Dosyaları : ${user.name}`}</h2>
                                     <p onClick={closeReadModal} style={{cursor:"pointer"}}>Kapat</p>
@@ -358,20 +358,20 @@ const UserContainer = ({ userId }) => {
                                 </div>
 
                                 {isUserSelectModalOpen && (
-                                    <Modal isOpen={isUserSelectModalOpen} onRequestClose={closeUserSelectModal} contentLabel="Users">
+                                    <Modal isOpen={isUserSelectModalOpen} onRequestClose={closeUserSelectModal} contentLabel="Users" ariaHideApp={false}>
                                         <div className={"custom-row"} style={{ justifyContent: "space-between" }}>
                                             <h3>Gönderilecek dosyayı ve kime gönderileceğini seçiniz</h3>
                                             <p onClick={closeUserSelectModal} style={{ cursor: "pointer" }}>Kapat</p>
                                         </div>
-                                        <div>
+                                        <div className={"custom-row"} style={{marginTop:8,marginBottom:8}}>
                                             {user.name !== "Alice" && (
-                                                <p onClick={() => handleRecipientSelect(1)} style={{ color: recipientId === 1 ? "green" : "black" ,padding:8,cursor:"pointer"}}>Alice</p>
+                                                <p className={"user-button"} onClick={() => handleRecipientSelect(1)} style={{ backgroundColor: recipientId === 1 ? "green" : null,width:"max-content"}}>Alice</p>
                                             )}
                                             {user.name !== "Bob" && (
-                                                <p onClick={() => handleRecipientSelect(2)} style={{ color: recipientId === 2 ? "green" : "black" ,padding:8,cursor:"pointer"}}>Bob</p>
+                                                <p className={"user-button"} onClick={() => handleRecipientSelect(2)} style={{ backgroundColor: recipientId === 2 ? "green" : null,width:"max-content"}}>Bob</p>
                                             )}
                                             {user.name !== "Charlie" && (
-                                                <p onClick={() => handleRecipientSelect(3)} style={{ color: recipientId === 3 ? "green" : "black" ,padding:8,cursor:"pointer"}}>Charlie</p>
+                                                <p className={"user-button"} onClick={() => handleRecipientSelect(3)} style={{ backgroundColor: recipientId === 3 ? "var(--green-color-1)" : null,width:"max-content"}}>Charlie</p>
                                             )}
                                         </div>
                                         {recipientId && (
@@ -401,7 +401,7 @@ const UserContainer = ({ userId }) => {
                                     Dosya Al
                                 </div>
                             </div>
-                            <Modal isOpen={isReceiveModalOpen} onRequestClose={closeReceiveModal} contentLabel="Dosyalar">
+                            <Modal isOpen={isReceiveModalOpen} onRequestClose={closeReceiveModal} contentLabel="Dosyalar" ariaHideApp={false}>
                                 <div className={"custom-row"} style={{justifyContent:"space-between"}}>
                                     <h2>{`${user.name} Kullanıcısına Gelen Dosyalar`}</h2>
                                     <p onClick={closeReceiveModal} style={{cursor:"pointer"}}>Kapat</p>
@@ -476,7 +476,7 @@ const ScenarioArea = () => {
             {loading && <div className={"loading-overlay"}><div className={"main-spinner"}></div></div>}
             <div className="scenario-area">
                 <p className={"title-text"}><span>Senaryo</span> Alanı</p>
-                <div className="custom-row">
+                <div className="custom-row wrap-row">
                     <p className={"italic"} style={{ marginRight: 12 }}>Kullanıcı<br />Seçim</p>
                     {
                         (users !== null && users.length !== 0) ?

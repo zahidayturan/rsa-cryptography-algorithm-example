@@ -11,7 +11,7 @@ const Scenarios = () => {
 
     return (
         <div className="scenarios">
-            <div className="custom-row">
+            <div className="custom-row wrap-row">
                 {scenarios.map((scenario) => (
                     <div
                         key={scenario.id}
@@ -25,7 +25,7 @@ const Scenarios = () => {
             {activeScenario ? (
                 <div>
                     <p>{scenarios.find(scenario => scenario.id === activeScenario)?.text}</p>
-                    <img src={scenarios.find(scenario => scenario.id === activeScenario)?.path} alt="" width="60%" style={{marginTop:8}}/>
+                    <img src={scenarios.find(scenario => scenario.id === activeScenario)?.path} alt="" width="100%" style={{marginTop:8,maxWidth:600}}/>
                 </div>
 
             ) : (
