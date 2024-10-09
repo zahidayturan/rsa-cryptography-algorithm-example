@@ -11,8 +11,10 @@ const UserContainer = ({ userId }) => {
     const [user, setUser] = useState(null);
     const [isReadModalOpen, setIsReadModalOpen] = useState(false);
     const [isReceiveModalOpen, setIsReceiveModalOpen] = useState(false);
+    const [isSpyModalOpen, setIsSpyModalOpen] = useState(false);
     const [readFileList, setReadFileList] = useState([]);
     const [receiveFileList, setReceiveFileList] = useState([]);
+    const [spyFileList, setSpyFileList] = useState([]);
     const [recipientId, setRecipientId] = useState(null);
     const [isUserSelectModalOpen, setIsUserSelectModalOpen] = useState(false);
 
@@ -69,6 +71,17 @@ const UserContainer = ({ userId }) => {
         setLoading(false);
     };
 
+    const fetchSpyFiles = async () => {
+        setLoading(true);
+        try {
+            const response = await axios.get(`${Endpoints.FILE}/all`);
+            setSpyFileList(response.data);
+        } catch (error) {
+            console.error("Dosyalar alınırken hata oluştu:", error);
+        }
+        setLoading(false);
+    };
+
     const openReadModal = () => {
         setIsReadModalOpen(true);
         fetchReadFiles();
@@ -88,9 +101,19 @@ const UserContainer = ({ userId }) => {
     };
 
     const openUserSelectModal = () => setIsUserSelectModalOpen(true);
+
     const closeUserSelectModal = () => {
         setIsUserSelectModalOpen(false);
         setRecipientId(null);
+    };
+
+    const openSpyModal = () => {
+        setIsSpyModalOpen(true);
+        fetchSpyFiles();
+    };
+
+    const closeSpyModal = () => {
+        setIsSpyModalOpen(false);
     };
 
 
@@ -178,8 +201,47 @@ const UserContainer = ({ userId }) => {
             {loading && <div className={"loading-overlay"}><div className={"main-spinner"}></div></div>}
             {(user != null && (
                 <div className={"user-container"}>
-                    <p className={"font-bold"} style={{ color: "var(--orange-color-1)" }}>{user.name}</p>
+                    <div className={"custom-row"} style={{justifyContent:"space-between"}}>
+                        <p className={"font-bold"} style={{ color: "var(--orange-color-1)" }}>{user.name}</p>
+                        {(userId === 3 && user.fileRead && user.fileReceive) && <p><div
+                            className={"icon-box"}
+                            style={{ backgroundColor: "var(--red-color-1)", cursor: "pointer" }}
+                            onClick={openSpyModal}
+                        >
+                            <img src="/icon/hacker.png" alt="Open Spy Menu" className={"mini-icon"} />
+                        </div></p>}
+                        {isSpyModalOpen && (
+                            <Modal isOpen={isSpyModalOpen} onRequestClose={closeSpyModal} contentLabel="Casus Menüsü">
+                                <div className={"custom-row"} style={{justifyContent:"space-between"}}>
+                                    <h2>{`Bütün Dosyalar`}</h2>
+                                    <p onClick={closeSpyModal} style={{cursor:"pointer"}}>Kapat</p>
+                                </div>
+                                <p style={{marginTop:8,marginBottom:16}}>{spyFileList.length} adet dosya listelendi</p>
+                                {loading ? (<p>Yükleniyor...</p>) : (
+                                    spyFileList.map((file) => (
+                                        <div key={file.id} style={{backgroundColor:"var(--secondary-color-1)",padding:8,borderRadius:8,marginBottom:8}}>
+                                            <div className={"custom-row"} style={{justifyContent:"space-between",alignItems:"center"}}>
+                                                <div>
+                                                    <p>{file.originalName}</p>
+                                                    <p className={"x-small-text"}>{file.size} bayt</p>
+                                                    <p className={"x-small-text"}>{file.ownerId === 1 ? "Bu dosyayı Alice yükledi" : file.ownerId === 2 ? "Bu dosyayı Bob yükledi" : "Bu dosyayı Charlie yükledi"}</p>
+                                                    <p className={"x-small-text"}>{file.recipientId === 1 ? "Bu dosya Alice için yüklendi" : file.recipientId === 2 ? "Bu dosya Bob için yüklendi" : "Bu dosya Charlie için yüklendi"}</p>
+                                                </div>
+                                                <div
+                                                    className={"icon-box"}
+                                                    style={{ backgroundColor: "var(--green-color-1)", cursor: "pointer" }}
+                                                    onClick={() => openFile(file.name,userId)}
+                                                >
+                                                    <img src="/icon/file.png" alt="Open File" className={"mini-icon"} />
+                                                </div>
+                                            </div>
 
+                                        </div>
+                                    ))
+                                )}
+                            </Modal>
+                        )}
+                    </div>
                     <div className={"custom-row"} style={{gap:0}}>
                         <Switch
                             isOn={user.publicKey}

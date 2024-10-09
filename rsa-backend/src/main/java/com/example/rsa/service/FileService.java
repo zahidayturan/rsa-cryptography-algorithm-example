@@ -1,6 +1,7 @@
 package com.example.rsa.service;
 
 import com.example.rsa.model.RsaFile;
+import com.example.rsa.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -95,17 +96,26 @@ public class FileService {
             return fileEncryptionService.decryptFileByName(fileName);
         } else {
             RsaFile file = findFileByName(fileName);
-            if (file != null) {
-                if (file.getOwnerId().equals(userId) || file.getRecipientId().equals(userId)) {
-                    return fileEncryptionService.decryptFileByName(fileName); // User authorized - return decrypted
+            if (file == null) {
+                throw new FileNotFoundException("File not found");
+            }
+            User user = userService.getUserById(userId);
+            if (user != null) {
+                if (user.getPublicKey()) {
+                    if (file.getOwnerId().equals(userId) || file.getRecipientId().equals(userId)) {
+                        return fileEncryptionService.decryptFileByName(fileName); // User authorized - return decrypted
+                    } else {
+                        return fileEncryptionService.fileByName(fileName); // User not authorized - return encrypted
+                    }
                 } else {
                     return fileEncryptionService.fileByName(fileName); // User not authorized - return encrypted
                 }
             } else {
-                throw new FileNotFoundException("File not found");
+                throw new IllegalArgumentException("Invalid user ID");
             }
         }
     }
+
 
     private RsaFile findFileByName(String fileName) {
         for (RsaFile file : files) {
