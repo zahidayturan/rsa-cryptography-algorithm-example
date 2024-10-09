@@ -1,7 +1,6 @@
 package com.example.rsa.controller;
 
 import com.example.rsa.model.RsaFile;
-import com.example.rsa.service.FileEncryptionService;
 import com.example.rsa.service.FileService;
 import io.swagger.v3.oas.annotations.Operation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,9 +18,6 @@ public class FileController {
 
     @Autowired
     private FileService fileService;
-
-    @Autowired
-    private FileEncryptionService fileEncryptionService;
 
     @PostMapping
     public ResponseEntity<String> handleFileUpload(@RequestParam("file") MultipartFile file,@RequestParam("userId") Integer userId,@RequestParam("recipientId") Integer recipientId) {
