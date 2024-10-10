@@ -23,8 +23,11 @@ public class RsaEncryptionService {
         int bitLength = 2048;
         BigInteger p = BigInteger.probablePrime(bitLength, random);
         BigInteger q = BigInteger.probablePrime(bitLength, random);
+        System.out.println("First prime number (p) :"+p);
+        System.out.println("Second prime number (q) :"+q);
 
         n = p.multiply(q);
+        System.out.println("Mode value (n):"+n);
         BigInteger phi = (p.subtract(BigInteger.ONE)).multiply(q.subtract(BigInteger.ONE));
 
         // Public Key
@@ -36,8 +39,8 @@ public class RsaEncryptionService {
         // Private Key
         d = e.modInverse(phi);
 
-        System.out.println("Public Key :"+e);
-        System.out.println("Private Key :"+d);
+        System.out.println("Public Key (e) :"+e);
+        System.out.println("Private Key (d) :"+d);
     }
 
     public BigInteger encrypt(BigInteger message) {

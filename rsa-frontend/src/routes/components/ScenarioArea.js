@@ -121,8 +121,8 @@ const UserContainer = ({ userId }) => {
         setLoading(true);
         const file = event.target.files[0];
         if (file) {
-            if (file.size > 512) {
-                toast.error("Dosya boyutu 512 byte'ı geçemez. Lütfen daha küçük bir dosya yükleyin.");
+            if (file.size > 256) {
+                toast.error("Dosya boyutu 256 byte'ı geçemez. Lütfen daha küçük bir dosya yükleyin.");
                 setLoading(false);
                 return;
             }
@@ -139,7 +139,7 @@ const UserContainer = ({ userId }) => {
                     'Content-Type': 'multipart/form-data'
                 }
             }).then(response => {
-                toast.success("Dosya başarıyla yüklendi");
+                toast.success("Dosya başarıyla yüklendi. Şifrelendi.");
                 console.log("Dosya başarıyla yüklendi:", response.data);
             })
                 .catch(error => {
@@ -178,7 +178,7 @@ const UserContainer = ({ userId }) => {
                     'Content-Type': 'multipart/form-data'
                 }
             }).then(response => {
-                toast.success("Dosya başarıyla yüklendi");
+                toast.success("Dosya başarıyla yüklendi. Şifrelendi.");
                 console.log("Dosya başarıyla yüklendi:", response.data);
                 closeUserSelectModal();
             }).catch(error => {
@@ -280,7 +280,7 @@ const UserContainer = ({ userId }) => {
                                 </p>
                                 <div className={"user-operation-button"}
                                      style={{ backgroundColor: user.fileUpload && "rgb(0,176,176)", cursor: user.fileUpload && "pointer" }}
-                                     onClick={() => document.getElementById(`fileInput-${user.id}`).click()}
+                                     onClick={() => user.fileUpload ? document.getElementById(`fileInput-${user.id}`).click() : null}
                                 >
                                     Dosya Yükle
                                 </div>
